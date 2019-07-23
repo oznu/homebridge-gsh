@@ -1,9 +1,11 @@
 node_modules
 .vscode
 server
+portal
 src
 scripts
 tsconfig.build.json
 tsconfig.json
 tslint.json
 .env
+homebridge-gsh-**.tgz

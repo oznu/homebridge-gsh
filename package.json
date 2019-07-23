@@ -1,6 +1,6 @@
 {
   "name": "homebridge-gsh",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Google Smart Home",
   "license": "GPL-3.0",
   "author": "oznu <dev@oz.nu>",
@@ -19,7 +19,8 @@
     "build": "npm run build:portal && npm run build:server",
     "build:plugin": "tsc",
     "build:server": "npm run build --prefix server",
-    "build:portal": "npm run build --prefix portal"
+    "build:portal": "npm run build --prefix portal",
+    "prepublishOnly": "npm run build:plugin"
   },
   "engines": {
     "node": ">=8.15.1",
@@ -28,8 +29,15 @@
   "keywords": [
     "homebridge-plugin",
     "google smart home",
+    "google-smart-home",
     "google home",
-    "homebridge"
+    "google-home",
+    "google assistant",
+    "google-assistant",
+    "google",
+    "android",
+    "homebridge",
+    "gsh"
   ],
   "dependencies": {
     "@oznu/ws-connect": "0.0.4",
