@@ -1,0 +1,30 @@
+
+.bg-dark {
+  background-color: #421367 !important;
+}
+
+.navbar.navbar-dark .breadcrumb .nav-item.active>.nav-link, .navbar.navbar-dark .navbar-nav .nav-item>.nav-link {
+  color: #FFF;
+}
+
+.navbar.navbar-dark .breadcrumb .nav-item.active>.nav-link, .navbar.navbar-dark .navbar-nav .nav-item.active>.nav-link {
+  background-color: rgba(255,255,255,.1);
+}
+
+.container-fluid {
+  margin-top: 10px;
+}
+
+.menu-logo {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.grey-text {
+  color: grey;
+  a {
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

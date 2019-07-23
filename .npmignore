@@ -1,0 +1,9 @@
+node_modules
+.vscode
+server
+src
+scripts
+tsconfig.build.json
+tsconfig.json
+tslint.json
+.env

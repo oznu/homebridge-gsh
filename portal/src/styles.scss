@@ -1,0 +1,20 @@
+/* You can add global styles to this file, and also import other style files */
+
+$fa-font-path:'../node_modules/@fortawesome/fontawesome-free-webfonts/webfonts';
+
+/* bootstrap 4 */
+@import "~bootstrap/scss/bootstrap";
+
+/* font-awesome */
+@import "~@fortawesome/fontawesome-free-webfonts/scss/fontawesome.scss";
+@import "~@fortawesome/fontawesome-free-webfonts/scss/fa-solid.scss";
+@import "~@fortawesome/fontawesome-free-webfonts/scss/fa-brands.scss";
+
+html {
+  height: 100vh;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+}

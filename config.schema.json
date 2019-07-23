@@ -1,0 +1,26 @@
+{
+  "pluginAlias": "google-smarthome",
+  "pluginType": "platform",
+  "singular": true,
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string",
+        "default": "Google Smart Home",
+        "minLength": 1,
+        "required": true
+      },
+      "token": {
+        "title": "Token",
+        "type": "string",
+        "required": true
+      },
+      "debug": {
+        "title": "Debug Mode",
+        "type": "boolean"
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "name": "homebridge-gsh-server",
+  "version": "1.0.0",
+  "description": "Server side component for the homebridge-gsh plugin.",
+  "license": "GPL-3.0",
+  "author": "oznu <dev@oz.nu>",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/oznu/homebridge-gsh.git"
+  },
+  "bugs": {
+    "url": "https://github.com/oznu/homebridge-gsh/issues"
+  },
+  "main": "dist/index.js",
+  "bin": {
+    "homebridge-gsh-server": "dist/index.js"
+  },
+  "scripts": {
+    "watch": "nodemon",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cache-manager": "^2.10.0",
+    "dotenv": "^8.0.0",
+    "ejs": "^2.6.2",
+    "express": "^4.17.1",
+    "express-session": "^1.16.2",
+    "helmet": "^3.18.0",
+    "jsonwebtoken": "^8.5.1",
+    "passport": "^0.4.0",
+    "passport-auth0": "^1.1.0",
+    "path": "^0.12.7",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
+    "source-map-support": "^0.5.12",
+    "uuid": "^3.3.2",
+    "ws": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^12.6.3",
+    "nodemon": "^1.19.1",
+    "ts-node": "^8.3.0",
+    "tslint": "^5.18.0",
+    "typescript": "^3.5.3"
+  }
+}

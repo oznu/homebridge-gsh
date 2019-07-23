@@ -1,0 +1,48 @@
+{
+  "name": "homebridge-gsh",
+  "version": "1.0.0",
+  "description": "Google Smart Home",
+  "license": "GPL-3.0",
+  "author": "oznu <dev@oz.nu>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/oznu/homebridge-gsh.git"
+  },
+  "bugs": {
+    "url": "https://github.com/oznu/homebridge-gsh/issues"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "watch": "concurrently \"npm run watch:server\" \"npm run watch:portal\"",
+    "watch:server": "npm run watch --prefix server",
+    "watch:portal": "npm run watch --prefix portal",
+    "build": "npm run build:portal && npm run build:server",
+    "build:plugin": "tsc",
+    "build:server": "npm run build --prefix server",
+    "build:portal": "npm run build --prefix portal"
+  },
+  "engines": {
+    "node": ">=8.15.1",
+    "homebridge": ">=0.4.22"
+  },
+  "keywords": [
+    "homebridge-plugin",
+    "google smart home",
+    "google home",
+    "homebridge"
+  ],
+  "dependencies": {
+    "@oznu/ws-connect": "0.0.4",
+    "fs-extra": "^8.1.0",
+    "hap-node-client": "0.0.26"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^8.0.0",
+    "@types/node": "^12.6.8",
+    "@types/ws": "^6.0.1",
+    "concurrently": "^4.1.1",
+    "ts-node": "^8.3.0",
+    "tslint": "^5.18.0",
+    "typescript": "^3.5.3"
+  }
+}
