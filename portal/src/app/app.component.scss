@@ -1,4 +1,8 @@
 
+.app-container {
+  min-height: 100%;
+}
+
 .bg-dark {
   background-color: #421367 !important;
 }
@@ -26,5 +30,18 @@
     &:hover {
       text-decoration: underline;
     }
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .auth0-logo {
+    margin-top: 5px;
+    text-align: center;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .auth0-logo {
+    text-align: right;
   }
 }

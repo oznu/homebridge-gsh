@@ -1,4 +1,4 @@
-<div class="h-100 w-100 d-flex flex-column align-items-start">
+<div class="app-container w-100 d-flex flex-column align-items-start">
 
   <nav class="navbar navbar-expand-md navbar-dark bg-dark w-100">
     <a class="navbar-brand" routerLink="/">
@@ -32,7 +32,10 @@
   <div class="mt-auto w-100 mb-2">
     <div class="container-fluid w-100">
       <div class="row">
-        <div class="col-md-12 w-100 text-center grey-text">
+
+        <div class="col-md-4"></div>
+
+        <div class="col-md-4 w-100 mt-auto grey-text text-center">
           <a class="grey-text small" href="https://github.com/oznu">
             &copy; 2019 oznu
           </a>
@@ -40,8 +43,15 @@
           <a class="grey-text small" routerLink="/privacy-policy">
             privacy policy
           </a>
-
         </div>
+
+        <div class="col-md-4 auth0-logo">
+
+          <a width="150" height="50" href="https://auth0.com/?utm_source=oss&utm_medium=gp&utm_campaign=oss"
+            target="_blank" alt="Single Sign On & Token Based Authentication - Auth0"><img width="150" height="50"
+              alt="JWT Auth for open source projects" src="/assets/a0-badge-dark.png" /></a>
+        </div>
+
       </div>
     </div>
   </div>

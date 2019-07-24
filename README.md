@@ -32,6 +32,7 @@ To configure `homebridge-gsh` you must also be running [homebridge-config-ui-x](
 ## License
 
 **Homebridge to Google Smart Home** is free software, and is released under the terms of the GNU General Public License (GPL) Version 3. See [LICENSE](LICENSE).
+
 ## Sponsors
 
-TBA
+<a width="150" height="50" href="https://auth0.com/?utm_source=oss&utm_medium=gp&utm_campaign=oss" target="_blank" alt="Single Sign On & Token Based Authentication - Auth0"><img width="150" height="50" alt="JWT Auth for open source projects" src="https://cdn.auth0.com/oss/badges/a0-badge-dark.png"/></a>
