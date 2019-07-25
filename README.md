@@ -1,3 +1,5 @@
+[![npm](https://img.shields.io/npm/v/homebridge-gsh.svg)](https://www.npmjs.com/package/homebridge-gsh) 
+
 # Homebridge to Google Smart Home
 
 Control your supported Homebridge accessories from any Google Home speaker or the Google Home mobile app. Inspired by [homebridge-alexa](https://github.com/NorthernMan54/homebridge-alexa).

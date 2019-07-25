@@ -21,7 +21,7 @@ export class Plugin {
       .digest('hex');
 
     // establish new websocket connection
-    const socket = new WebSocket(`wss://homebridge-gsh.iot.oz.nu?token=${config.token}&deviceId=${deviceId}`);
+    const socket = new WebSocket(`wss://homebridge-gsh.iot.oz.nu/gsh?token=${config.token}&deviceId=${deviceId}`);
 
     // listen for websocket status events, connect and disconnect events, errors, etc.
     socket.on('websocket-status', (status) => {

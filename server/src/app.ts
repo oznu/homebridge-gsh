@@ -25,9 +25,6 @@ const serveSpa = (req, res, next) => {
   res.sendFile(path.resolve(__dirname, '../static/index.html'));
 };
 
-// set the view engine to ejs
-app.set('view engine', 'ejs');
-
 // set some headers to help secure the app
 app.use(helmet({
   hsts: false,
@@ -41,11 +38,9 @@ app.use(helmet({
       styleSrc: [
         `'self'`,
         `'unsafe-inline'`,
-        `https://cdn.auth0.com/ulp/react-components/1.0.0-beta.186/css/main.cdn.min.css`,
-        `https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.css`,
       ],
       imgSrc: [`'self'`, `https://user-images.githubusercontent.com`],
-      fontSrc: [`'self'`, `https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/webfonts/`],
+      fontSrc: [`'self'`],
       workerSrc: [`'none'`],
       connectSrc: [`'self'`],
     },
@@ -65,7 +60,7 @@ app.use(express.static(path.resolve(__dirname, '../static')));
 const sess = {
   secret: process.env.COOKIE_SECRET_KEY,
   cookie: {
-    maxAge: 300000,
+    maxAge: 120000,
   },
   resave: false,
   saveUninitialized: true,

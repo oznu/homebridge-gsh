@@ -4,14 +4,13 @@
 
 export const environment = {
   production: false,
-  socketUrl: 'ws://localhost:8080',
+  socketUrl: 'ws://localhost:3000',
   api: {
-    base: `http://${document.location.hostname}:8080/api`,
+    base: `http://${document.location.hostname}:3000`,
   },
   jwt: {
     tokenKey: 'access_token',
     whitelistedDomains: [`${document.location.hostname}:8080`],
-    blacklistedRoutes: [`${document.location.hostname}:8080/api/login`],
   },
   amazon: {
     clientId: 'amzn1.application-oa2-client.6bf64ddf771d4e3fa5c3a09aa8008549'

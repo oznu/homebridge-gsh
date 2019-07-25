@@ -5,8 +5,8 @@
   "author": "oznu <dev@oz.nu>",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "watch": "ng serve",
+    "start": "ng serve --port=4500",
+    "watch": "ng serve --port=4500",
     "build": "ng build --prod --output-path=../server/static --source-map=false --aot=true",
     "lint": "ng lint"
   },

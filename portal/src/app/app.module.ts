@@ -6,6 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeModule } from './home/home.module';
 import { AboutModule } from './about/about.module';
+import { LinkAccountModule } from './link-account/link-account.module';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { AboutModule } from './about/about.module';
     HttpClientModule,
     HomeModule,
     AboutModule,
+    LinkAccountModule,
     AppRoutingModule
   ],
   providers: [],
