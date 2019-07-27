@@ -13,7 +13,7 @@ export class Plugin {
     this.log = log;
     this.config = config;
     this.homebridgeConfig = homebridgeConfig;
-    this.hap = new Hap(this.homebridgeConfig.bridge.pin, this.config.debug);
+    this.hap = new Hap(log, this.homebridgeConfig.bridge.pin, this.config.debug);
 
     // generate unique id for service based on the username, sha256 for privacy
     const deviceId = crypto.createHash('sha256')

@@ -6,6 +6,7 @@ import { Switch } from './types/switch';
 import { WindowCovering } from './types/window-covering';
 
 export class Hap {
+  log;
   homebridge: HAPNodeJSClient;
   services: Array<any> = [];
 
@@ -22,7 +23,9 @@ export class Hap {
     WindowCovering: new WindowCovering(),
   };
 
-  constructor(pin, debug) {
+  constructor(log, pin, debug) {
+    this.log = log;
+
     this.homebridge = new HAPNodeJSClient({
       debug,
       pin,
@@ -41,6 +44,7 @@ export class Hap {
   async start() {
     await this.getAccessories();
     await this.buildSyncResponse();
+    this.log.info(`Finished discovery, ${this.services.length} accessories found.`);
   }
 
   /**

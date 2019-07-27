@@ -1,8 +1,12 @@
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/19808920/58770949-bd9c7900-857f-11e9-8558-5dfaffddffda.png" height="200">
+</p>
+
 [![npm](https://img.shields.io/npm/v/homebridge-gsh.svg)](https://www.npmjs.com/package/homebridge-gsh) 
 
 # Homebridge to Google Smart Home
 
-Control your supported Homebridge accessories from any Google Home speaker or the Google Home mobile app. Inspired by [homebridge-alexa](https://github.com/NorthernMan54/homebridge-alexa).
+Control your supported [Homebridge](https://github.com/nfarina/homebridge) accessories from any Google Home speaker or the Google Home mobile app. Inspired by [homebridge-alexa](https://github.com/NorthernMan54/homebridge-alexa).
 
 ## Supported Device Types
 

@@ -13,13 +13,17 @@
   },
   "main": "dist/index.js",
   "scripts": {
+    "install:portal": "npm install --prefix portal",
+    "install:server": "npm install --prefix server",
     "watch": "concurrently \"npm run watch:server\" \"npm run watch:portal\"",
+    "watch:plugin": "nodemon",
     "watch:server": "npm run watch --prefix server",
     "watch:portal": "npm run watch --prefix portal",
     "build": "npm run build:portal && npm run build:server",
     "build:plugin": "tsc",
     "build:server": "npm run build --prefix server",
     "build:portal": "npm run build --prefix portal",
+    "start:server": "npm run start --prefix server",
     "prepublishOnly": "npm run build:plugin"
   },
   "engines": {
@@ -40,7 +44,7 @@
     "gsh"
   ],
   "dependencies": {
-    "@oznu/ws-connect": "0.0.4",
+    "@oznu/ws-connect": "^1.0.0",
     "fs-extra": "^8.1.0",
     "hap-node-client": "0.0.26"
   },
@@ -49,6 +53,7 @@
     "@types/node": "^12.6.8",
     "@types/ws": "^6.0.1",
     "concurrently": "^4.1.1",
+    "nodemon": "^1.19.1",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
     "typescript": "^3.5.3"

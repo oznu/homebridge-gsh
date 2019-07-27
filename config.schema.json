@@ -2,6 +2,7 @@
   "pluginAlias": "google-smarthome",
   "pluginType": "platform",
   "singular": true,
+  "headerDisplay": "## Homebridge Config UI X Upgrade Required\nhomebridge-config-ui-x v4.6.0 or later is required to configure this plugin correctly. If you are seeing this message you need to upgrade (or reload the UI).\n",
   "schema": {
     "type": "object",
     "properties": {
