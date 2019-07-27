@@ -1,16 +1,11 @@
 import { Characteristic } from '../hap-types';
 
-export class Switch {
-  private deviceType: string;
-
-  constructor(type) {
-    this.deviceType = type;
-  }
-
+export class Fan {
   sync(service) {
+
     return {
       id: service.uniqueId,
-      type: this.deviceType,
+      type: 'action.devices.types.FAN',
       traits: [
         'action.devices.traits.OnOff',
       ],

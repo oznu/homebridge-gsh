@@ -1,6 +1,6 @@
 {
   "name": "homebridge-gsh",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "Google Smart Home",
   "license": "GPL-3.0",
   "author": "oznu <dev@oz.nu>",
@@ -54,6 +54,7 @@
     "@types/ws": "^6.0.1",
     "concurrently": "^4.1.1",
     "nodemon": "^1.19.1",
+    "request-promise": "^4.2.4",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
     "typescript": "^3.5.3"

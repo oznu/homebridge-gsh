@@ -12,7 +12,18 @@ Control your supported [Homebridge](https://github.com/nfarina/homebridge) acces
 
 * Switch
 * Outlet
+* Light Bulb
+    * On / Off
+    * Brightness
+    * Color (Hue/Saturation)
+* Fan
+    * On / Off
+* Garage Door
+* Thermostat
 * Window Coverings
+* Lock Mechanism
+
+*Note: Google Smart Home does not currently support "sensor" devices such as Temperature Sensors, Motion Sensors, Occupancy Sensors etc.*
 
 ## Installation Instructions
 

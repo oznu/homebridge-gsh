@@ -1,9 +1,14 @@
 import { HAPNodeJSClient } from 'hap-node-client';
-import { ServicesTypes, CharacteristicTypes } from './hap-types';
+import { ServicesTypes, Service, Characteristic } from './hap-types';
 import * as crypto from 'crypto';
 
 import { Switch } from './types/switch';
 import { WindowCovering } from './types/window-covering';
+import { Fan } from './types/fan';
+import { Lightbulb } from './types/lightbulb';
+import { GarageDoorOpener } from './types/garage-door-opener';
+import { Thermostat } from './types/thermostat';
+import { LockMechanism } from './types/lock-mechanism';
 
 export class Hap {
   log;
@@ -14,13 +19,23 @@ export class Hap {
     'Outlet',
     'Switch',
     'WindowCovering',
+    'Fan',
+    'Lightbulb',
+    'GarageDoorOpener',
+    'Thermostat',
+    'LockMechanism',
   ];
 
   /* init types */
   types = {
-    Switch: new Switch(),
-    Outlet: new Switch(),
+    Switch: new Switch('action.devices.types.SWITCH'),
+    Outlet: new Switch('action.devices.types.OUTLET'),
     WindowCovering: new WindowCovering(),
+    Fan: new Fan(),
+    Lightbulb: new Lightbulb(),
+    GarageDoorOpener: new GarageDoorOpener(),
+    Thermostat: new Thermostat(),
+    LockMechanism: new LockMechanism(),
   };
 
   constructor(log, pin, debug) {
@@ -35,7 +50,6 @@ export class Hap {
     this.homebridge.on('Ready', () => {
       this.start();
     });
-
   }
 
   /**
@@ -44,7 +58,7 @@ export class Hap {
   async start() {
     await this.getAccessories();
     await this.buildSyncResponse();
-    this.log.info(`Finished discovery, ${this.services.length} accessories found.`);
+    this.log.info(`Finished discovery, ${this.services.length} supported accessories found.`);
   }
 
   /**
@@ -92,6 +106,8 @@ export class Hap {
                   status: 'SUCCESS',
                 });
               } else {
+                this.log.error('Failed to control an accessory. Make sure all your Homebridge instances are using the same PIN.');
+                this.log.error(err.message);
                 response.push({
                   ids: [device.id],
                   status: 'ERROR',
@@ -148,7 +164,7 @@ export class Hap {
   async parseAccessories(instance) {
     instance.accessories.accessories.forEach((accessory) => {
       // get accessory information service
-      const accessoryInformationService = accessory.services.find(x => x.type === '0000003E-0000-1000-8000-0026BB765291');
+      const accessoryInformationService = accessory.services.find(x => x.type === Service.AccessoryInformation);
       const accessoryInformation = {};
 
       if (accessoryInformationService && accessoryInformationService.characteristics) {
@@ -161,7 +177,7 @@ export class Hap {
 
       // discover the service type
       accessory.services
-        .filter(x => x.type !== '0000003E-0000-1000-8000-0026BB765291')
+        .filter(x => x.type !== Service.AccessoryInformation)
         .filter(x => ServicesTypes[x.type])
         .filter(x => this.supportedTypes.includes((ServicesTypes[x.type])))
         .forEach((service) => {
@@ -182,8 +198,8 @@ export class Hap {
 
           // discover name of service
           const serviceNameCharacteristic = service.characteristics.find(x => [
-            '00000023-0000-1000-8000-0026BB765291',
-            '000000E3-0000-1000-8000-0026BB765291',
+            Characteristic.Name,
+            Characteristic.ConfiguredName,
           ].includes(x.type));
 
           service.serviceName = serviceNameCharacteristic ?

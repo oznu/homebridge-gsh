@@ -1,4 +1,6 @@
 
+import { Characteristic } from '../hap-types';
+
 export class WindowCovering {
   sync(service) {
     return {
@@ -38,7 +40,7 @@ export class WindowCovering {
     return {
       on: true,
       online: true,
-      openPercent: service.characteristics.find(x => x.type === '0000006D-0000-1000-8000-0026BB765291').value,
+      openPercent: service.characteristics.find(x => x.type === Characteristic.CurrentPosition).value,
     };
   }
 
@@ -47,7 +49,7 @@ export class WindowCovering {
       return {
         characteristics: [{
           aid: service.aid,
-          iid: service.characteristics.find(x => x.type === '0000007C-0000-1000-8000-0026BB765291').iid,
+          iid: service.characteristics.find(x => x.type === Characteristic.TargetPosition).iid,
           value: command.execution[0].params.openPercent,
         }],
       };
