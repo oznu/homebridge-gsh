@@ -57,7 +57,7 @@ Homebridge must be running in insecure mode to allow accessory control via this 
 
 ### Multiple Homebridge Instances
 
-This plugin only needs to be configured on one Homebridge instance on your network as the plugin will discover all your other Homebridge instances and be able to control them. For this to work:
+This plugin **must** only be configured on one Homebridge instance on your network as the plugin will discover all your other Homebridge instances and be able to control them. For this to work:
 
 * all instances must be running [in insecure mode](https://github.com/oznu/homebridge-config-ui-x/wiki/Enabling-Accessory-Control)
 * all instances must have the same PIN defined in the `config.json`
@@ -88,7 +88,7 @@ See [Enabling Accessory Control](https://github.com/oznu/homebridge-config-ui-x/
 
 [![Slack Status](https://slackin-znyruquwmv.now.sh/badge.svg)](https://slackin-znyruquwmv.now.sh)
 
-Join the [Homebridge Slack](https://slackin-znyruquwmv.now.sh/) chat and ask in the [#ui](https://homebridgeteam.slack.com/messages/CLDNFEZS9) channel.
+Join the [Homebridge Slack](https://slackin-znyruquwmv.now.sh/) chat and ask in the [#hap-google-smart-home](https://homebridgeteam.slack.com/messages/CLDNFEZS9) channel.
 
 ## Credits
 
