@@ -8,6 +8,15 @@
 
 Control your supported [Homebridge](https://github.com/nfarina/homebridge) accessories from any Google Home speaker or the Google Home mobile app. Inspired by [homebridge-alexa](https://github.com/NorthernMan54/homebridge-alexa).
 
+* [Supported Device Types](#supported-device-types)
+* [Installation Instructions](#installation-instructions)
+* [Configuration](#configuration)
+* [Known Issues](#known-issues)
+* [Troubleshooting](#troubleshooting)
+* [Credits](#credits)
+* [License](#license)
+* [Sponsors](#sponsors)
+
 ## Supported Device Types
 
 * Switch
@@ -41,6 +50,45 @@ To configure `homebridge-gsh` you must also be running [homebridge-config-ui-x](
 4. Sign in with your Google or GitHub account.
 5. Your account is now linked.
 6. Restart Homebridge for the changes to take effect.
+
+### Enabling Accessory Control
+
+Homebridge must be running in insecure mode to allow accessory control via this plugin. See [Enabling Accessory Control](https://github.com/oznu/homebridge-config-ui-x/wiki/Enabling-Accessory-Control) for instructions.
+
+### Multiple Homebridge Instances
+
+This plugin only needs to be configured on one Homebridge instance on your network as the plugin will discover all your other Homebridge instances and be able to control them. For this to work:
+
+* all instances must be running [in insecure mode](https://github.com/oznu/homebridge-config-ui-x/wiki/Enabling-Accessory-Control)
+* all instances must have the same PIN defined in the `config.json`
+
+## Known Issues
+
+1. Only one Homebridge instance can be linked to an account (even across different local networks). You will experience unintended results if you try and link more than one instance to the same account.
+
+## Troubleshooting
+
+#### 1. Errors during installation
+
+Make sure you installed the package with `sudo` flag. Most installation errors can be fixed by removing the plugin and reinstalling:
+
+```shell
+# cleanup
+sudo npm uninstall -g homebridge-gsh
+
+# reinstall
+sudo npm install -g homebridge-gsh
+```
+
+#### 2. Cannot control accessories
+
+See [Enabling Accessory Control](https://github.com/oznu/homebridge-config-ui-x/wiki/Enabling-Accessory-Control) and [Multiple Homebridge Instances](#multiple-homebridge-instances).
+
+#### 3. Ask on Slack
+
+[![Slack Status](https://slackin-znyruquwmv.now.sh/badge.svg)](https://slackin-znyruquwmv.now.sh)
+
+Join the [Homebridge Slack](https://slackin-znyruquwmv.now.sh/) chat and ask in the [#ui](https://homebridgeteam.slack.com/messages/CLDNFEZS9) channel.
 
 ## Credits
 
