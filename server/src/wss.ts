@@ -47,23 +47,21 @@ export default class Wss extends EventEmitter {
     const clientId = req.$clientId;
     const deviceId = req.$deviceId;
 
-    console.log('Connections Established From:', req.connection.remoteAddress, clientId, deviceId);
+    const remoteIp = req.headers['x-real-ip'] || req.connection.remoteAddress;
+    console.log('Client Connected:', remoteIp, clientId, deviceId);
 
     const clientListenerName = this.getClientListener(clientId);
 
     // handle message response from the homebridge
     ws.on('message', (payload) => {
-      console.log('got message');
       let data;
 
       try {
         data = JSON.parse(payload);
       } catch (e) {
-        console.log('Response not valid JSON');
+        console.log('ERROR ::', remoteIp, clientId, 'Sent a response that is not valid JSON');
         return;
       }
-
-      console.log(data);
 
       if (data.requestId) {
         // message is a response to a request
@@ -83,6 +81,7 @@ export default class Wss extends EventEmitter {
     // cleanup listeners when iot device disconnects
     ws.on('close', () => {
       this.removeListener(clientListenerName, clientEventHandler);
+      console.log('Client Disconnected:', remoteIp, clientId, deviceId);
     });
   }
 

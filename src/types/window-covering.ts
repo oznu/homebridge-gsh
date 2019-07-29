@@ -13,7 +13,6 @@ export class WindowCovering {
         defaultNames: [
           service.serviceName,
           service.accessoryInformation.Name,
-          'Window Covering',
         ],
         name: service.serviceName,
         nicknames: [],
@@ -45,14 +44,20 @@ export class WindowCovering {
   }
 
   execute(service, command) {
-    if (command.execution.length && command.execution[0].command === 'action.devices.commands.OpenClose') {
-      return {
-        characteristics: [{
-          aid: service.aid,
-          iid: service.characteristics.find(x => x.type === Characteristic.TargetPosition).iid,
-          value: command.execution[0].params.openPercent,
-        }],
-      };
+    if (!command.execution.length) {
+      return { characteristics: [] };
+    }
+
+    switch (command.execution[0].command) {
+      case ('action.devices.commands.OpenClose'): {
+        return {
+          characteristics: [{
+            aid: service.aid,
+            iid: service.characteristics.find(x => x.type === Characteristic.TargetPosition).iid,
+            value: command.execution[0].params.openPercent,
+          }],
+        };
+      }
     }
   }
 

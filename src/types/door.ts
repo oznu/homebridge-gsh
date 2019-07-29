@@ -1,18 +1,13 @@
+
 import { Characteristic } from '../hap-types';
 
-export class Switch {
-  private deviceType: string;
-
-  constructor(type) {
-    this.deviceType = type;
-  }
-
+export class Door {
   sync(service) {
     return {
       id: service.uniqueId,
-      type: this.deviceType,
+      type: 'action.devices.types.DOOR',
       traits: [
-        'action.devices.traits.OnOff',
+        'action.devices.traits.OpenClose',
       ],
       name: {
         defaultNames: [
@@ -23,6 +18,9 @@ export class Switch {
         nicknames: [],
       },
       willReportState: false,
+      attributes: {
+        openDirection: ['IN', 'OUT'],
+      },
       deviceInfo: {
         manufacturer: service.accessoryInformation.Manufacturer,
         model: service.accessoryInformation.Model,
@@ -39,8 +37,9 @@ export class Switch {
 
   query(service) {
     return {
-      on: service.characteristics.find(x => x.type === Characteristic.On).value,
+      on: true,
       online: true,
+      openPercent: service.characteristics.find(x => x.type === Characteristic.CurrentPosition).value,
     };
   }
 
@@ -50,12 +49,12 @@ export class Switch {
     }
 
     switch (command.execution[0].command) {
-      case ('action.devices.commands.OnOff'): {
+      case ('action.devices.commands.OpenClose'): {
         return {
           characteristics: [{
             aid: service.aid,
-            iid: service.characteristics.find(x => x.type === Characteristic.On).iid,
-            value: command.execution[0].params.on,
+            iid: service.characteristics.find(x => x.type === Characteristic.TargetPosition).iid,
+            value: command.execution[0].params.openPercent,
           }],
         };
       }

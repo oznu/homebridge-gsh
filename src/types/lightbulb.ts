@@ -109,7 +109,7 @@ export class Lightbulb {
           }, {
             aid: service.aid,
             iid: service.characteristics.find(x => x.type === Characteristic.Saturation).iid,
-            value: command.execution[0].params.color.spectrumHSV.hue,
+            value: command.execution[0].params.color.spectrumHSV.saturation,
           }],
         };
       }

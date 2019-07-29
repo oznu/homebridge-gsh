@@ -2,40 +2,33 @@ import { HAPNodeJSClient } from 'hap-node-client';
 import { ServicesTypes, Service, Characteristic } from './hap-types';
 import * as crypto from 'crypto';
 
-import { Switch } from './types/switch';
-import { WindowCovering } from './types/window-covering';
+import { Door } from './types/door';
 import { Fan } from './types/fan';
-import { Lightbulb } from './types/lightbulb';
 import { GarageDoorOpener } from './types/garage-door-opener';
-import { Thermostat } from './types/thermostat';
+import { Lightbulb } from './types/lightbulb';
 import { LockMechanism } from './types/lock-mechanism';
+import { Switch } from './types/switch';
+import { Window } from './types/window';
+import { WindowCovering } from './types/window-covering';
+import { Thermostat } from './types/thermostat';
 
 export class Hap {
   log;
   homebridge: HAPNodeJSClient;
   services: Array<any> = [];
 
-  supportedTypes = [
-    'Outlet',
-    'Switch',
-    'WindowCovering',
-    'Fan',
-    'Lightbulb',
-    'GarageDoorOpener',
-    'Thermostat',
-    'LockMechanism',
-  ];
-
   /* init types */
   types = {
-    Switch: new Switch('action.devices.types.SWITCH'),
-    Outlet: new Switch('action.devices.types.OUTLET'),
-    WindowCovering: new WindowCovering(),
+    Door: new Door(),
     Fan: new Fan(),
-    Lightbulb: new Lightbulb(),
     GarageDoorOpener: new GarageDoorOpener(),
-    Thermostat: new Thermostat(),
+    Lightbulb: new Lightbulb(),
     LockMechanism: new LockMechanism(),
+    Outlet: new Switch('action.devices.types.OUTLET'),
+    Switch: new Switch('action.devices.types.SWITCH'),
+    Thermostat: new Thermostat(),
+    Window: new Window(),
+    WindowCovering: new WindowCovering(),
   };
 
   constructor(log, pin, debug) {
@@ -45,6 +38,10 @@ export class Hap {
       debug,
       pin,
       timeout: 5,
+    });
+
+    this.homebridge.once('Ready', () => {
+      this.log.info(`Finished instance discovery`);
     });
 
     this.homebridge.on('Ready', () => {
@@ -58,7 +55,6 @@ export class Hap {
   async start() {
     await this.getAccessories();
     await this.buildSyncResponse();
-    this.log.info(`Finished discovery, ${this.services.length} supported accessories found.`);
   }
 
   /**
@@ -179,7 +175,7 @@ export class Hap {
       accessory.services
         .filter(x => x.type !== Service.AccessoryInformation)
         .filter(x => ServicesTypes[x.type])
-        .filter(x => this.supportedTypes.includes((ServicesTypes[x.type])))
+        .filter(x => this.types.hasOwnProperty(ServicesTypes[x.type]))
         .forEach((service) => {
           service.accessoryInformation = accessoryInformation;
           service.aid = accessory.aid;

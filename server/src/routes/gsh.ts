@@ -40,17 +40,18 @@ router.post('/', async (req, res, next) => {
       requestTime: new Date().toISOString(),
     };
 
+    console.log(requestId, `:: Request To ${clientId}:`, '\n', JSON.stringify(payload, null, 4));
     core.wss.sendToClient(clientId, payload);
 
     const timeoutHandler = setTimeout(() => {
-      console.log(requestId, ':: Timeout');
+      console.log(requestId, `:: Timeout From ${clientId}`);
       core.wss.removeAllListeners(requestId);
       res.sendStatus(503);
     }, 5000);
 
     core.wss.once(requestId, (response) => {
       clearTimeout(timeoutHandler);
-      console.log(requestId, ':: Sending Response:', '\n' + JSON.stringify(response, null, 4));
+      console.log(requestId, `:: Response From ${clientId}:`, '\n' + JSON.stringify(response, null, 4));
       res.json(response);
     });
 

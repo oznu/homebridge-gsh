@@ -40,14 +40,20 @@ export class Fan {
   }
 
   execute(service, command) {
-    if (command.execution.length && command.execution[0].command === 'action.devices.commands.OnOff') {
-      return {
-        characteristics: [{
-          aid: service.aid,
-          iid: service.characteristics.find(x => x.type === Characteristic.On).iid,
-          value: command.execution[0].params.on,
-        }],
-      };
+    if (!command.execution.length) {
+      return { characteristics: [] };
+    }
+
+    switch (command.execution[0].command) {
+      case ('action.devices.commands.OnOff'): {
+        return {
+          characteristics: [{
+            aid: service.aid,
+            iid: service.characteristics.find(x => x.type === Characteristic.On).iid,
+            value: command.execution[0].params.on,
+          }],
+        };
+      }
     }
   }
 
