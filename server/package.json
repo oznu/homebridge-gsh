@@ -36,7 +36,6 @@
     "path": "^0.12.7",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
-    "rxjs": "^6.5.2",
     "source-map-support": "^0.5.12",
     "uuid": "^3.3.2",
     "ws": "^7.1.1"

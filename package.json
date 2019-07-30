@@ -1,6 +1,6 @@
 {
   "name": "homebridge-gsh",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Google Smart Home",
   "license": "GPL-3.0",
   "author": "oznu <dev@oz.nu>",
@@ -43,10 +43,17 @@
     "homebridge",
     "gsh"
   ],
+  "bundledDependencies": [
+    "@oznu/ws-connect",
+    "fs-extra",
+    "hap-node-client",
+    "rxjs"
+  ],
   "dependencies": {
     "@oznu/ws-connect": "^1.0.0",
     "fs-extra": "^8.1.0",
-    "hap-node-client": "0.0.26"
+    "hap-node-client": "0.0.26",
+    "rxjs": "^6.5.2"
   },
   "devDependencies": {
     "@types/fs-extra": "^8.0.0",
