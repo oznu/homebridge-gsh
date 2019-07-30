@@ -86,7 +86,7 @@ export class Hap {
             this.pendingStateReport.push(i);
           }
         }),
-        debounceTime(500),
+        debounceTime(1000),
       )
       .subscribe((data) => {
         const pendingStateReport = this.pendingStateReport;
