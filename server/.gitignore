@@ -3,3 +3,4 @@ node_modules
 dist
 static
 homebridge-gsh-server-**.tgz
+.secret.json

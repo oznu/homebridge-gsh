@@ -6,3 +6,4 @@ tsconfig.build.json
 nodemon.json
 .env
 homebridge-gsh-server-**.tgz
+.secret.json

@@ -1,7 +1,6 @@
 import { HAPNodeJSClient } from 'hap-node-client';
 import { ServicesTypes, Service, Characteristic } from './hap-types';
 import * as crypto from 'crypto';
-
 import { Door } from './types/door';
 import { Fan } from './types/fan';
 import { GarageDoorOpener } from './types/garage-door-opener';
@@ -11,8 +10,11 @@ import { Switch } from './types/switch';
 import { Window } from './types/window';
 import { WindowCovering } from './types/window-covering';
 import { Thermostat } from './types/thermostat';
+import { Subject } from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
 
 export class Hap {
+  socket;
   log;
   homebridge: HAPNodeJSClient;
   services: Array<any> = [];
@@ -31,7 +33,32 @@ export class Hap {
     WindowCovering: new WindowCovering(),
   };
 
-  constructor(log, pin, debug) {
+  /* event tracking */
+  evInstances: Array<any> = [];
+  evServices: Array<any> = [];
+  reportStateSubject = new Subject();
+  pendingStateReport = [];
+
+  /* types of characteristics to track */
+  evTypes = [
+    Characteristic.On,
+    Characteristic.CurrentPosition,
+    Characteristic.TargetPosition,
+    Characteristic.CurrentDoorState,
+    Characteristic.TargetDoorState,
+    Characteristic.Brightness,
+    Characteristic.Hue,
+    Characteristic.Saturation,
+    Characteristic.LockCurrentState,
+    Characteristic.LockTargetState,
+    Characteristic.TargetHeatingCoolingState,
+    Characteristic.TargetTemperature,
+    Characteristic.CurrentTemperature,
+    Characteristic.CurrentRelativeHumidity,
+  ];
+
+  constructor(socket, log, pin, debug) {
+    this.socket = socket;
     this.log = log;
 
     this.homebridge = new HAPNodeJSClient({
@@ -47,6 +74,25 @@ export class Hap {
     this.homebridge.on('Ready', () => {
       this.start();
     });
+
+    this.homebridge.on('hapEvent', ((event) => {
+      this.handleHapEvent(event);
+    }));
+
+    this.reportStateSubject
+      .pipe(
+        map((i: any) => {
+          if (!this.pendingStateReport.includes(i)) {
+            this.pendingStateReport.push(i);
+          }
+        }),
+        debounceTime(500),
+      )
+      .subscribe((data) => {
+        const pendingStateReport = this.pendingStateReport;
+        this.pendingStateReport = [];
+        this.processPendingStateReports(pendingStateReport);
+      });
   }
 
   /**
@@ -55,6 +101,7 @@ export class Hap {
   async start() {
     await this.getAccessories();
     await this.buildSyncResponse();
+    await this.registerCharacteristicEventHandlers();
   }
 
   /**
@@ -67,6 +114,10 @@ export class Hap {
     return devices;
   }
 
+  /**
+   * Process the QUERY intent
+   * @param devices
+   */
   async query(devices) {
     const response = {};
 
@@ -83,6 +134,10 @@ export class Hap {
     return response;
   }
 
+  /**
+   * Process the EXECUTE intent
+   * @param commands
+   */
   async execute(commands) {
     const response = [];
 
@@ -114,12 +169,15 @@ export class Hap {
           });
 
         }
-
       }
     }
     return response;
   }
 
+  /**
+   * Request a status update from an accessory
+   * @param service
+   */
   async getStatus(service) {
     const iids: number[] = service.characteristics.map(c => c.iid);
 
@@ -157,6 +215,10 @@ export class Hap {
     });
   }
 
+  /**
+   * Parse accessories from homebridge and filter out the ones we support
+   * @param instance
+   */
   async parseAccessories(instance) {
     instance.accessories.accessories.forEach((accessory) => {
       // get accessory information service
@@ -204,5 +266,105 @@ export class Hap {
           this.services.push(service);
         });
     });
+  }
+
+  /**
+   * Register hap characteristic event handlers
+   */
+  async registerCharacteristicEventHandlers() {
+    for (const service of this.services) {
+      // get a list of characteristics we can watch
+      const evCharacteristics = service.characteristics.filter(x => x.perms.includes('ev') && this.evTypes.includes(x.type));
+
+      if (evCharacteristics.length) {
+        // register the instance if it's not already there
+        if (!this.evInstances.find(x => x.username === service.instance.username)) {
+          const newInstance = Object.assign({}, service.instance);
+          newInstance.evCharacteristics = [];
+          this.evInstances.push(newInstance);
+        }
+
+        const instance = this.evInstances.find(x => x.username === service.instance.username);
+
+        for (const evCharacteristic of evCharacteristics) {
+          if (!instance.evCharacteristics.find(x => x.aid === service.aid && x.iid === evCharacteristic.iid)) {
+            instance.evCharacteristics.push({ aid: service.aid, iid: evCharacteristic.iid, ev: true });
+          }
+        }
+      }
+    }
+
+    // start listeners
+    for (const instance of this.evInstances) {
+      const unregistered = instance.evCharacteristics.filter(x => !x.registered);
+      if (unregistered.length) {
+        this.homebridge.HAPevent(instance.ipAddress, instance.port, JSON.stringify({
+          characteristics: instance.evCharacteristics.filter(x => !x.registered),
+        }), (err, response) => {
+          if (err) {
+            this.log.error(err);
+          } else {
+            instance.evCharacteristics.forEach((c) => {
+              c.registered = true;
+            });
+            this.log.debug('HAP Event listeners registered succesfully');
+          }
+        });
+      }
+    }
+  }
+
+  /**
+   * Handle events from HAP
+   * @param event
+   */
+  async handleHapEvent(events) {
+    for (const event of events) {
+      const accessories = this.services.filter(s =>
+        s.instance.ipAddress === event.host && s.instance.port === event.port && s.aid === event.aid);
+      const service = accessories.find(x => x.characteristics.find(c => c.iid === event.iid));
+      const characteristic = service.characteristics.find(c => c.iid === event.iid);
+      characteristic.value = event.value;
+      this.reportStateSubject.next(service.uniqueId);
+    }
+  }
+
+  /**
+   * Generate a state report from the list pending
+   * @param pendingStateReport
+   */
+  async processPendingStateReports(pendingStateReport) {
+    const states = {};
+
+    for (const uniqueId of pendingStateReport) {
+      const service = this.services.find(x => x.uniqueId === uniqueId);
+      states[service.uniqueId] = this.types[service.serviceType].query(service);
+    }
+
+    return await this.sendStateReport(states);
+  }
+
+  async sendFullStateReport() {
+    const states = {};
+    for (const service of this.services) {
+      states[service.uniqueId] = this.types[service.serviceType].query(service);
+    }
+    return await this.sendStateReport(states);
+  }
+
+  /**
+   * Send the state report back to Google
+   * @param states
+   * @param requestId
+   */
+  async sendStateReport(states, requestId?) {
+    const payload = {
+      requestId,
+      type: 'report-state',
+      body: states,
+    };
+    this.log.debug('Sending State Report');
+    this.log.debug(JSON.stringify(payload, null, 2));
+    this.socket.sendJson(payload);
   }
 }

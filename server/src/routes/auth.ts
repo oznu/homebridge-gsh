@@ -18,7 +18,7 @@ router.get('/login', passport.authenticate('auth0', {
 });
 
 // Perform the final stage of authentication and redirect to previously requested URL or '/user'
-router.get('/callback', (req, res, next) => {
+router.get('/callback', (req: any, res, next) => {
   passport.authenticate('auth0', (err, user, info) => {
     if (err) { return next(err); }
     if (!user) { return res.redirect('/login'); }
@@ -32,7 +32,7 @@ router.get('/callback', (req, res, next) => {
 });
 
 // Perform session logout and redirect to homepage
-router.get('/logout', (req, res) => {
+router.get('/logout', (req: any, res) => {
   req.logout();
 
   const logoutURL = new URL(
@@ -44,7 +44,7 @@ router.get('/logout', (req, res) => {
   });
   logoutURL.search = searchString;
 
-  res.redirect(logoutURL);
+  res.redirect(logoutURL.href);
 });
 
 export default router;

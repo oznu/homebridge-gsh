@@ -13,7 +13,6 @@ export class Plugin {
     this.log = log;
     this.config = config;
     this.homebridgeConfig = homebridgeConfig;
-    this.hap = new Hap(log, this.homebridgeConfig.bridge.pin, this.config.debug);
 
     // generate unique id for service based on the username, sha256 for privacy
     const deviceId = crypto.createHash('sha256')
@@ -22,6 +21,8 @@ export class Plugin {
 
     // establish new websocket connection
     const socket = new WebSocket(`wss://homebridge-gsh.iot.oz.nu/gsh?token=${config.token}&deviceId=${deviceId}`);
+
+    this.hap = new Hap(socket, log, this.homebridgeConfig.bridge.pin, this.config.debug);
 
     // listen for websocket status events, connect and disconnect events, errors, etc.
     socket.on('websocket-status', (status) => {
@@ -35,8 +36,9 @@ export class Plugin {
 
       const res = (response) => {
         socket.sendJson({
+          type: 'response',
           requestId: req.requestId,
-          response,
+          body: response,
         });
       };
 
@@ -44,7 +46,8 @@ export class Plugin {
         input.requestId = req.body.requestId;
         switch (input.intent) {
           case 'action.devices.SYNC':
-            return res(await this.onSync(req.body, req.headers));
+            res(await this.onSync(req.body, req.headers));
+            return this.hap.sendFullStateReport();
           case 'action.devices.QUERY':
             return res(await this.onQuery(req.body, req.headers));
           case 'action.devices.EXECUTE':
@@ -70,7 +73,7 @@ export class Plugin {
     return {
       requestId: body.requestId,
       payload: {
-        agentUserId: '1836.15267389',
+        agentUserId: null, // this is populated by the server
         devices,
       },
     };

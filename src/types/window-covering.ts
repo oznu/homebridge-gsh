@@ -17,7 +17,7 @@ export class WindowCovering {
         name: service.serviceName,
         nicknames: [],
       },
-      willReportState: false,
+      willReportState: true,
       attributes: {
         openDirection: ['UP', 'DOWN'],
       },

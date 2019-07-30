@@ -17,7 +17,7 @@ export class Window {
         name: service.serviceName,
         nicknames: [],
       },
-      willReportState: false,
+      willReportState: true,
       attributes: {
         openDirection: ['LEFT', 'RIGHT'],
       },

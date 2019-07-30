@@ -20,7 +20,7 @@ export class Thermostat {
         name: service.serviceName,
         nicknames: [],
       },
-      willReportState: false,
+      willReportState: true,
       deviceInfo: {
         manufacturer: service.accessoryInformation.Manufacturer,
         model: service.accessoryInformation.Model,

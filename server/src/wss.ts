@@ -63,9 +63,19 @@ export default class Wss extends EventEmitter {
         return;
       }
 
-      if (data.requestId) {
-        // message is a response to a request
-        this.emit(data.requestId, data.response);
+      switch (data.type) {
+        case ('report-state'): {
+          core.gsh.sendReportState(clientId, data.requestId, data.body);
+          break;
+        }
+        case ('response'): {
+          this.emit(data.requestId, data.body);
+          break;
+        }
+        default: {
+          console.log('ERROR ::', remoteIp, clientId, 'Received unknown message payload');
+          break;
+        }
       }
     });
 

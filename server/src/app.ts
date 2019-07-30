@@ -14,7 +14,6 @@ import * as  Auth0Strategy from 'passport-auth0';
 
 import authRouter from './routes/auth';
 import userRouter from './routes/user';
-import gshRouter from './routes/gsh';
 
 // Create Express server
 const app = express();
@@ -106,7 +105,6 @@ app.use(passport.session());
 // include routes
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
-app.use('/gsh', gshRouter);
 
 // serve index.html for anything not on the /api routes
 app.get(/^((?!user|auth|gsh\/).)*$/, serveSpa);

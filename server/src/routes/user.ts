@@ -5,7 +5,7 @@ import * as jwt from 'jsonwebtoken';
 const router = express.Router();
 
 /* GET user profile. */
-router.get('/token', (req, res, next) => {
+router.get('/token', (req: any, res, next) => {
   if (!req.user) {
     return res.sendStatus(401);
   }

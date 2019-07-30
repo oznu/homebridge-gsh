@@ -22,11 +22,13 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
+    "actions-on-google": "^2.9.1",
     "body-parser": "^1.19.0",
     "cache-manager": "^2.10.0",
     "dotenv": "^8.0.0",
     "express": "^4.17.1",
     "express-session": "^1.16.2",
+    "fs-extra": "^8.1.0",
     "helmet": "^3.19.0",
     "jsonwebtoken": "^8.5.1",
     "passport": "^0.4.0",
@@ -34,6 +36,7 @@
     "path": "^0.12.7",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
+    "rxjs": "^6.5.2",
     "source-map-support": "^0.5.12",
     "uuid": "^3.3.2",
     "ws": "^7.1.1"
