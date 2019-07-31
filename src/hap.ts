@@ -57,6 +57,12 @@ export class Hap {
     Characteristic.CurrentRelativeHumidity,
   ];
 
+  deviceFilter: Array<string> = [];
+
+  deviceNameMap: Array<{ replace: string; with: string }> = [
+    // { replace: 'Thermostat', with: 'Lounge Thermostat' },
+  ];
+
   constructor(socket, log, pin, debug) {
     this.socket = socket;
     this.log = log;
@@ -263,7 +269,16 @@ export class Hap {
           service.serviceName = serviceNameCharacteristic ?
             serviceNameCharacteristic.value : service.accessoryInformation.Name || service.serviceType;
 
-          this.services.push(service);
+          // perform user-defined name replacements
+          const nameMap = this.deviceNameMap.find(x => x.replace === service.serviceName);
+          if (nameMap) {
+            service.serviceName = nameMap.with;
+          }
+
+          // perform user-defined service filters based on name
+          if (!this.deviceFilter.includes(service.serviceName)) {
+            this.services.push(service);
+          }
         });
     });
   }

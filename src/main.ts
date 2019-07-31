@@ -20,7 +20,7 @@ export class Plugin {
       .digest('hex');
 
     // establish new websocket connection
-    const socket = new WebSocket(`wss://homebridge-gsh.iot.oz.nu/gsh?token=${config.token}&deviceId=${deviceId}`);
+    const socket = new WebSocket(`wss://homebridge-gsh.iot.oz.nu/socket?token=${config.token}&deviceId=${deviceId}`);
 
     this.hap = new Hap(socket, log, this.homebridgeConfig.bridge.pin, this.config.debug);
 
