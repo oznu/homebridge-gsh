@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { HomeModule } from './home/home.module';
 import { AboutModule } from './about/about.module';
 import { LinkAccountModule } from './link-account/link-account.module';
+import { TermsOfServiceModule } from './terms-of-service/terms-of-service.module';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { LinkAccountModule } from './link-account/link-account.module';
     HttpClientModule,
     HomeModule,
     AboutModule,
+    TermsOfServiceModule,
     LinkAccountModule,
     AppRoutingModule
   ],
