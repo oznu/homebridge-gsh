@@ -72,6 +72,10 @@ export default class Wss extends EventEmitter {
           this.emit(data.requestId, data.body);
           break;
         }
+        case ('request-sync'): {
+          core.gsh.requestSync(clientId);
+          break;
+        }
         default: {
           console.log('ERROR ::', remoteIp, clientId, 'Received unknown message payload');
           break;

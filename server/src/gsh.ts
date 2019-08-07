@@ -133,4 +133,9 @@ export default class Gsh {
     });
   }
 
+  async requestSync(clientId: string) {
+    console.log(`Got sync request from ${clientId}`);
+    return await this.app.requestSync(clientId);
+  }
+
 }

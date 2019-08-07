@@ -57,10 +57,11 @@ export class Hap {
     Characteristic.CurrentRelativeHumidity,
   ];
 
-  deviceFilter: Array<string> = [];
+  deviceFilter: Array<string> = [
+  ];
 
   deviceNameMap: Array<{ replace: string; with: string }> = [
-    // { replace: 'Thermostat', with: 'Lounge Thermostat' },
+    // { replace: 'Lounge Thermostat', with: 'Thermostat' },
   ];
 
   constructor(socket, log, pin, debug) {
@@ -108,6 +109,10 @@ export class Hap {
     await this.getAccessories();
     await this.buildSyncResponse();
     await this.registerCharacteristicEventHandlers();
+
+    setTimeout(() => {
+      this.requestSync();
+    }, 10000);
   }
 
   /**
@@ -118,6 +123,16 @@ export class Hap {
       return this.types[service.serviceType].sync(service);
     });
     return devices;
+  }
+
+  /**
+   * Ask google to send a sync request
+   */
+  async requestSync() {
+    this.log.debug('Sending Sync Request');
+    this.socket.sendJson({
+      type: 'request-sync',
+    });
   }
 
   /**

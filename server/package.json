@@ -18,7 +18,7 @@
   },
   "scripts": {
     "watch": "nodemon",
-    "build": "tsc",
+    "build": "rimraf dist && tsc && npm pack",
     "start": "node dist/index.js"
   },
   "dependencies": {
