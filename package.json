@@ -1,6 +1,7 @@
 {
   "name": "homebridge-gsh",
-  "version": "0.0.11",
+  "displayName": "Homebridge Google Smart Home",
+  "version": "0.0.12",
   "description": "Google Smart Home",
   "license": "GPL-3.0",
   "author": "oznu <dev@oz.nu>",
