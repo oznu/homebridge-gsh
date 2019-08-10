@@ -112,7 +112,7 @@ export class Hap {
 
     setTimeout(() => {
       this.requestSync();
-    }, 10000);
+    }, 30000);
   }
 
   /**

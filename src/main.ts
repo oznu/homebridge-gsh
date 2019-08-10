@@ -46,8 +46,11 @@ export class Plugin {
         input.requestId = req.body.requestId;
         switch (input.intent) {
           case 'action.devices.SYNC':
-            res(await this.onSync(req.body, req.headers));
-            return this.hap.sendFullStateReport();
+            setTimeout(() => {
+              this.log.debug('Sending full post-sync state report');
+              this.hap.sendFullStateReport();
+            }, 5000);
+            return res(await this.onSync(req.body, req.headers));
           case 'action.devices.QUERY':
             return res(await this.onQuery(req.body, req.headers));
           case 'action.devices.EXECUTE':
