@@ -4,6 +4,7 @@
 
 import * as path from 'path';
 import * as fs from 'fs-extra';
+import { PluginConfig } from './interfaces';
 
 let homebridge;
 
@@ -17,7 +18,7 @@ class HomebridgeGoogleSmartHome {
   private log;
   private config;
 
-  constructor(log, config) {
+  constructor(log, config: PluginConfig) {
     this.log = log;
     this.config = config;
 

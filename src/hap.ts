@@ -1,6 +1,12 @@
 import { HAPNodeJSClient } from 'hap-node-client';
 import { ServicesTypes, Service, Characteristic } from './hap-types';
 import * as crypto from 'crypto';
+import { Subject } from 'rxjs';
+import { debounceTime, map } from 'rxjs/operators';
+
+import { PluginConfig, HapInstance, HapService, Instance } from './interfaces';
+import { Log } from './logger';
+
 import { Door } from './types/door';
 import { Fan } from './types/fan';
 import { GarageDoorOpener } from './types/garage-door-opener';
@@ -10,14 +16,12 @@ import { Switch } from './types/switch';
 import { Window } from './types/window';
 import { WindowCovering } from './types/window-covering';
 import { Thermostat } from './types/thermostat';
-import { Subject } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
 
 export class Hap {
   socket;
-  log;
+  log: Log;
   homebridge: HAPNodeJSClient;
-  services: Array<any> = [];
+  services: HapService[] = [];
 
   /* init types */
   types = {
@@ -34,8 +38,8 @@ export class Hap {
   };
 
   /* event tracking */
-  evInstances: Array<any> = [];
-  evServices: Array<any> = [];
+  evInstances: Instance[] = [];
+  evServices: HapService[] = [];
   reportStateSubject = new Subject();
   pendingStateReport = [];
 
@@ -57,19 +61,19 @@ export class Hap {
     Characteristic.CurrentRelativeHumidity,
   ];
 
-  deviceFilter: Array<string> = [
-  ];
+  instanceBlacklist: Array<string> = [];
+  accessoryFilter: Array<string> = [];
+  deviceNameMap: Array<{ replace: string; with: string }> = [];
 
-  deviceNameMap: Array<{ replace: string; with: string }> = [
-    // { replace: 'Lounge Thermostat', with: 'Thermostat' },
-  ];
-
-  constructor(socket, log, pin, debug) {
+  constructor(socket, log, pin, config: PluginConfig) {
     this.socket = socket;
     this.log = log;
 
+    this.accessoryFilter = config.accessoryFilter || [];
+    this.instanceBlacklist = config.instanceBlacklist || [];
+
     this.homebridge = new HAPNodeJSClient({
-      debug,
+      debug: config.debug,
       pin,
       timeout: 5,
     });
@@ -224,11 +228,15 @@ export class Hap {
    */
   async getAccessories() {
     return new Promise((resolve, reject) => {
-      this.homebridge.HAPaccessories(async (instances) => {
+      this.homebridge.HAPaccessories(async (instances: HapInstance[]) => {
         this.services = [];
 
         for (const instance of instances) {
-          await this.parseAccessories(instance);
+          if (!this.instanceBlacklist.find(x => x.toLowerCase() === instance.instance.txt.id.toLowerCase())) {
+            await this.parseAccessories(instance);
+          } else {
+            this.log.debug(`Instance [${instance.instance.txt.id}] on instance blacklist, ignoring.`);
+          }
         }
 
         return resolve(true);
@@ -240,8 +248,9 @@ export class Hap {
    * Parse accessories from homebridge and filter out the ones we support
    * @param instance
    */
-  async parseAccessories(instance) {
+  async parseAccessories(instance: HapInstance) {
     instance.accessories.accessories.forEach((accessory) => {
+
       // get accessory information service
       const accessoryInformationService = accessory.services.find(x => x.type === Service.AccessoryInformation);
       const accessoryInformation = {};
@@ -291,7 +300,7 @@ export class Hap {
           }
 
           // perform user-defined service filters based on name
-          if (!this.deviceFilter.includes(service.serviceName)) {
+          if (!this.accessoryFilter.includes(service.serviceName)) {
             this.services.push(service);
           }
         });

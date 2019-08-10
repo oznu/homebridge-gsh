@@ -1,16 +1,18 @@
 import * as crypto from 'crypto';
 import * as WebSocket from '@oznu/ws-connect';
 
+import { PluginConfig } from './interfaces';
+import { Log } from './logger';
 import { Hap } from './hap';
 
 export class Plugin {
-  public log;
+  public log: Log;
   public config;
   public homebridgeConfig;
   public hap;
 
-  constructor(log, config, homebridgeConfig) {
-    this.log = log;
+  constructor(log, config: PluginConfig, homebridgeConfig) {
+    this.log = new Log(log, config.debug);
     this.config = config;
     this.homebridgeConfig = homebridgeConfig;
 
@@ -22,7 +24,7 @@ export class Plugin {
     // establish new websocket connection
     const socket = new WebSocket(`wss://homebridge-gsh.iot.oz.nu/socket?token=${config.token}&deviceId=${deviceId}`);
 
-    this.hap = new Hap(socket, log, this.homebridgeConfig.bridge.pin, this.config.debug);
+    this.hap = new Hap(socket, this.log, this.homebridgeConfig.bridge.pin, this.config);
 
     // listen for websocket status events, connect and disconnect events, errors, etc.
     socket.on('websocket-status', (status) => {
@@ -58,7 +60,7 @@ export class Plugin {
           case 'action.devices.DISCONNECT':
             return res(await this.onDisconnect(req.body, req.headers));
           default:
-            this.log.error('ERROR - Unknown Intent:', input.intent);
+            this.log.error(`ERROR - Unknown Intent: ${input.intent}`);
             break;
         }
       }
