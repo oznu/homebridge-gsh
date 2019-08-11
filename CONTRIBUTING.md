@@ -63,4 +63,6 @@ npm run start:server
 
 ## Contributing To Translations
 
-Multiple translation support will be added in a future release.
+Additional language translations, or improvements to existing translations are most welcome.  Translations can be found here: 
+
+https://github.com/oznu/homebridge-gsh/tree/master/i18n
