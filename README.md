@@ -1,12 +1,11 @@
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/19808920/58770949-bd9c7900-857f-11e9-8558-5dfaffddffda.png" height="200">
+    <img src="https://user-images.githubusercontent.com/19808920/58770949-bd9c7900-857f-11e9-8558-5dfaffddffda.png" height="200"><br>
+    <img src="portal/src/assets/works-with-google-assistant-horizontal.png" width="200">
 </p>
 
 [![npm](https://img.shields.io/npm/v/homebridge-gsh.svg)](https://www.npmjs.com/package/homebridge-gsh) 
 
 # Homebridge to Google Smart Home
-
-<img src="portal/src/assets/works-with-google-assistant-horizontal.png" width="200">
 
 Control your supported [Homebridge](https://github.com/nfarina/homebridge) accessories from any Google Home speaker or the Google Home mobile app. Inspired by [homebridge-alexa](https://github.com/NorthernMan54/homebridge-alexa).
 
@@ -99,7 +98,7 @@ See [Enabling Accessory Control](https://github.com/oznu/homebridge-config-ui-x/
 
 Join the [Homebridge Slack](https://slackin-znyruquwmv.now.sh/) chat and ask in the [#hap-google-smart-home](https://homebridgeteam.slack.com/messages/CLDNFEZS9) channel.
 
-# Contributing
+## Contributing
 
 Please see [CONTRIBUTING.md](CONTRIBUTING.md).
 
