@@ -6,7 +6,7 @@
 
 # Homebridge to Google Smart Home
 
-# <img src="portal/src/assets/works-with-google-assistant-horizontal.png" width="200">
+<img src="portal/src/assets/works-with-google-assistant-horizontal.png" width="200">
 
 Control your supported [Homebridge](https://github.com/nfarina/homebridge) accessories from any Google Home speaker or the Google Home mobile app. Inspired by [homebridge-alexa](https://github.com/NorthernMan54/homebridge-alexa).
 
