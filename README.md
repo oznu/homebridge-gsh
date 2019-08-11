@@ -1,9 +1,7 @@
 <p align="center">
     <img src="portal/src/assets/homebridge-logo-full-color.png" height="200"><br>
-    <img src="portal/src/assets/works-with-google-assistant-horizontal.png" width="200">
+    <img src="portal/src/assets/works-with-google-assistant-horizontal.png" width="150">
 </p>
-
-[![npm](https://img.shields.io/npm/v/homebridge-gsh.svg)](https://www.npmjs.com/package/homebridge-gsh) 
 
 # Homebridge to Google Smart Home
 
