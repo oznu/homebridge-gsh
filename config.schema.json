@@ -18,6 +18,12 @@
         "type": "string",
         "required": true
       },
+      "notice": {
+        "title": "Notice",
+        "type": "string",
+        "required": true,
+        "default": "Keep your token a secret!"
+      },
       "debug": {
         "title": "Enable Debug Logging",
         "type": "boolean"
