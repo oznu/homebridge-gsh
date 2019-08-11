@@ -97,6 +97,10 @@ See [Enabling Accessory Control](https://github.com/oznu/homebridge-config-ui-x/
 
 Join the [Homebridge Slack](https://slackin-znyruquwmv.now.sh/) chat and ask in the [#hap-google-smart-home](https://homebridgeteam.slack.com/messages/CLDNFEZS9) channel.
 
+# Contributing
+
+Please see [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Credits
 
 * [NorthernMan54](https://github.com/NorthernMan54) - developer of the [Hap-Node-Client](https://github.com/NorthernMan54/Hap-Node-Client) module which is used by this plugin.
