@@ -22,6 +22,6 @@ Homebridge GSH currently supports the following locales:
 - [ ] Thai [[th.json](./th.json)]
 - [ ] Turkish [[tr.json](./tr.json)]
 
-If you would like to see the Homebridge GSH Google Actions in your locale, [pull requests](https://help.github.com/en/articles/creating-a-pull-request) are more than welcome. If your language is not currently listed above, Google Actions currently does not support your locale.
+If you would like to see the Homebridge GSH Google Actions in your locale, [pull requests](https://help.github.com/en/articles/creating-a-pull-request) are more than welcome. If your language is not listed above, Google Actions currently does not support your locale.
 
 **Please derive new translations from [English Locale](./en.json).**
