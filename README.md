@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/19808920/58770949-bd9c7900-857f-11e9-8558-5dfaffddffda.png" height="200"><br>
+    <img src="portal/src/assets/homebridge-logo-full-color.png" height="200"><br>
     <img src="portal/src/assets/works-with-google-assistant-horizontal.png" width="200">
 </p>
 
