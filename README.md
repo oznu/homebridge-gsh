@@ -1,6 +1,6 @@
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/3979615/62948461-bae3bd00-be27-11e9-81b5-05c65c388a1e.png" height="100"><br>
-    <img src="https://github.com/oznu/homebridge-gsh/blob/master/portal/src/assets/works-with-google-assistant-horizontal.png" width="100">
+    <img src="https://user-images.githubusercontent.com/3979615/62948461-bae3bd00-be27-11e9-81b5-05c65c388a1e.png" height="120"><br>
+    <img src="https://github.com/oznu/homebridge-gsh/blob/master/portal/src/assets/works-with-google-assistant-horizontal.png" width="150">
 </p>
 
 # Homebridge to Google Smart Home
