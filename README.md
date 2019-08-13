@@ -1,6 +1,6 @@
 <p align="center">
-    <img src="portal/src/assets/homebridge-logo-full-color.png" height="200"><br>
-    <img src="portal/src/assets/works-with-google-assistant-horizontal.png" width="150">
+    <img src="https://user-images.githubusercontent.com/3979615/62948461-bae3bd00-be27-11e9-81b5-05c65c388a1e.png" height="100"><br>
+    <img src="https://github.com/oznu/homebridge-gsh/blob/master/portal/src/assets/works-with-google-assistant-horizontal.png" width="100">
 </p>
 
 # Homebridge to Google Smart Home
@@ -58,6 +58,8 @@ To configure `homebridge-gsh` you must also be running [homebridge-config-ui-x](
 4. Sign in with your Google or GitHub account.
 5. Your account is now linked.
 6. Restart Homebridge for the changes to take effect.
+
+![homebridge-gsh-signup](https://user-images.githubusercontent.com/3979615/62948031-ff228d80-be26-11e9-9e07-ef1023f28fa8.gif)
 
 ### Enabling Accessory Control
 
