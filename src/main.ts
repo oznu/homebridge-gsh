@@ -46,6 +46,7 @@ export class Plugin {
 
       // check we are ready to receive incoming request
       if (!this.hap.ready) {
+        this.log.info('Devices Not Ready');
         return res(this.deviceNotReady(req.body, req.headers));
       }
 
