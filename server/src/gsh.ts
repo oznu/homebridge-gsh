@@ -107,6 +107,10 @@ export default class Gsh {
       core.wss.once(requestId, (response) => {
         clearTimeout(timeoutHandler);
 
+        if (!response.payload) {
+          response.payload = {};
+        }
+
         // force the agentUserId
         if (intent === 'action.devices.SYNC') {
           response.payload.agentUserId = clientId;
@@ -135,7 +139,11 @@ export default class Gsh {
 
   async requestSync(clientId: string) {
     console.log(`Got sync request from ${clientId}`);
-    return await this.app.requestSync(clientId);
+    try {
+      return await this.app.requestSync(clientId);
+    } catch (e) {
+      console.error(`Sync Request Failed :: ${clientId}:`, e);
+    }
   }
 
 }

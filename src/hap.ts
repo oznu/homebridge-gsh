@@ -20,8 +20,12 @@ import { Thermostat } from './types/thermostat';
 export class Hap {
   socket;
   log: Log;
+  pin: string;
+  config: PluginConfig;
   homebridge: HAPNodeJSClient;
   services: HapService[] = [];
+
+  public ready: boolean;
 
   /* init types */
   types = {
@@ -65,30 +69,19 @@ export class Hap {
   accessoryFilter: Array<string> = [];
   deviceNameMap: Array<{ replace: string; with: string }> = [];
 
-  constructor(socket, log, pin, config: PluginConfig) {
+  constructor(socket, log, pin: string, config: PluginConfig) {
+    this.config = config;
     this.socket = socket;
     this.log = log;
+    this.pin = pin;
 
     this.accessoryFilter = config.accessoryFilter || [];
     this.instanceBlacklist = config.instanceBlacklist || [];
 
-    this.homebridge = new HAPNodeJSClient({
-      debug: config.debug,
-      pin,
-      timeout: 5,
-    });
-
-    this.homebridge.once('Ready', () => {
-      this.log.info(`Finished instance discovery`);
-    });
-
-    this.homebridge.on('Ready', () => {
-      this.start();
-    });
-
-    this.homebridge.on('hapEvent', ((event) => {
-      this.handleHapEvent(event);
-    }));
+    this.log.debug('Waiting 15 seconds before starting instance discovery...');
+    setTimeout(() => {
+      this.discover();
+    }, 15000);
 
     this.reportStateSubject
       .pipe(
@@ -107,6 +100,30 @@ export class Hap {
   }
 
   /**
+   * Homebridge Instance Discovery
+   */
+  async discover() {
+    this.homebridge = new HAPNodeJSClient({
+      debug: this.config.debug,
+      pin: this.pin,
+      timeout: 10,
+    });
+
+    this.homebridge.once('Ready', () => {
+      this.ready = true;
+      this.log.info(`Finished instance discovery`);
+    });
+
+    this.homebridge.on('Ready', () => {
+      this.start();
+    });
+
+    this.homebridge.on('hapEvent', ((event) => {
+      this.handleHapEvent(event);
+    }));
+  }
+
+  /**
    * Start processing
    */
   async start() {
@@ -116,7 +133,7 @@ export class Hap {
 
     setTimeout(() => {
       this.requestSync();
-    }, 30000);
+    }, 15000);
   }
 
   /**

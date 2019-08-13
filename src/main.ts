@@ -9,7 +9,7 @@ export class Plugin {
   public log: Log;
   public config;
   public homebridgeConfig;
-  public hap;
+  public hap: Hap;
 
   constructor(log, config: PluginConfig, homebridgeConfig) {
     this.log = new Log(log, config.debug);
@@ -43,6 +43,11 @@ export class Plugin {
           body: response,
         });
       };
+
+      // check we are ready to receive incoming request
+      if (!this.hap.ready) {
+        return res(this.deviceNotReady(req.body, req.headers));
+      }
 
       for (const input of req.body.inputs) {
         input.requestId = req.body.requestId;
@@ -121,6 +126,17 @@ export class Plugin {
     this.log.debug(JSON.stringify(body, null, 2));
     return {
       requestId: body.requestId,
+      payload: {},
+    };
+  }
+
+  deviceNotReady(body, headers) {
+    return {
+      requestId: body.requestId,
+      payload: {
+        errorCode: 'deviceNotReady',
+        status: 'ERROR',
+      },
     };
   }
 }
