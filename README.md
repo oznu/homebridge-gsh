@@ -58,6 +58,7 @@ To configure `homebridge-gsh` you must also be running [homebridge-config-ui-x](
 4. Sign in with your Google or GitHub account.
 5. Your account is now linked.
 6. Restart Homebridge for the changes to take effect.
+7. Add the [Homebridge Action](https://assistant.google.com/services/a/uid/000000b558f0d5d1?hl=en) using the Google Home mobile app. [See Wiki](https://github.com/oznu/homebridge-gsh/wiki#add-homebridge-to-google-home-app) for detailed instructions.
 
 ![homebridge-gsh-signup](https://user-images.githubusercontent.com/3979615/62948031-ff228d80-be26-11e9-9e07-ef1023f28fa8.gif)
 
