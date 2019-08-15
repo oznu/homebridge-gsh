@@ -402,6 +402,12 @@ export class Hap {
 
   async sendFullStateReport() {
     const states = {};
+
+    // don't report state if there are no services
+    if (!this.services.length) {
+      return;
+    }
+
     for (const service of this.services) {
       states[service.uniqueId] = this.types[service.serviceType].query(service);
     }
