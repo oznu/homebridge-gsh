@@ -18,7 +18,8 @@ import { core } from './index';
 
 export default class Gsh {
   app: SmartHomeApp;
-  memoryCache = cacheManager.caching({ store: 'memory', max: 1000, ttl: 3600 });
+  userProfileCache = cacheManager.caching({ store: 'memory', max: 1000, ttl: 3600 });
+  userNotLinkedCache = cacheManager.caching({ store: 'memory', max: 1000, ttl: 3600 });
 
   constructor() {
     this.app = smarthome({
@@ -44,7 +45,7 @@ export default class Gsh {
 
   async verifyUser(headers) {
     // load profile from memory cache
-    let profile = await this.memoryCache.get(headers.authorization);
+    let profile = await this.userProfileCache.get(headers.authorization);
 
     if (!profile) {
       // if the profile was not found do a lookup
@@ -55,7 +56,7 @@ export default class Gsh {
             authorization: headers.authorization,
           },
         });
-        await this.memoryCache.set(headers.authorization, profile);
+        await this.userProfileCache.set(headers.authorization, profile);
       } catch (e) {
         throw new UnauthorizedError();
       }
@@ -78,14 +79,22 @@ export default class Gsh {
       requestTime: new Date().toISOString(),
     };
 
+    // clear user from not linked cache
+    await this.userNotLinkedCache.del(clientId);
+
     return await this.sendToClient(clientId, requestId, intent, payload);
   }
 
   async sendToClient(clientId, requestId, intent, payload) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       console.log(requestId, `:: ${intent} :: Request To ${clientId}:`, '\n', JSON.stringify(payload, null, 4));
 
       core.wss.sendToClient(clientId, payload);
+
+      // if disconnecting, add user to the not linked cache
+      if (intent === 'action.devices.DISCONNECT') {
+        await this.userNotLinkedCache.set(clientId, true);
+      }
 
       // Handle Timeouts
       const timeoutHandler = setTimeout(() => {
@@ -123,6 +132,11 @@ export default class Gsh {
   }
 
   async sendReportState(clientId: string, requestId: string, states: SmartHomeV1ReportStateRequest['payload']['devices']) {
+    if (await this.userNotLinkedCache.get(clientId)) {
+      console.log(`Ignoring Report State from ${clientId} as they are not linked`);
+      return;
+    }
+
     console.log(`Sending Report State from ${clientId} to Google API`);
     return await this.app.reportState({
       requestId,
@@ -132,16 +146,23 @@ export default class Gsh {
           states,
         },
       },
-    }).catch((err) => {
+    }).catch(async (err) => {
+      await this.userNotLinkedCache.set(clientId, true);
       console.log(`Report State Failed ::${clientId}:`, err);
     });
   }
 
   async requestSync(clientId: string) {
+    if (await this.userNotLinkedCache.get(clientId)) {
+      console.log(`Ignoring Sync Request from ${clientId} as they are not linked`);
+      return;
+    }
+
     console.log(`Got sync request from ${clientId}`);
     try {
       return await this.app.requestSync(clientId);
     } catch (e) {
+      await this.userNotLinkedCache.set(clientId, true);
       console.error(`Sync Request Failed :: ${clientId}:`, e);
     }
   }

@@ -112,6 +112,10 @@ export class Hap {
     this.homebridge.once('Ready', () => {
       this.ready = true;
       this.log.info(`Finished instance discovery`);
+
+      setTimeout(() => {
+        this.requestSync();
+      }, 15000);
     });
 
     this.homebridge.on('Ready', () => {
@@ -130,10 +134,6 @@ export class Hap {
     await this.getAccessories();
     await this.buildSyncResponse();
     await this.registerCharacteristicEventHandlers();
-
-    setTimeout(() => {
-      this.requestSync();
-    }, 15000);
   }
 
   /**
@@ -150,7 +150,7 @@ export class Hap {
    * Ask google to send a sync request
    */
   async requestSync() {
-    this.log.debug('Sending Sync Request');
+    this.log.info('Sending Sync Request');
     this.socket.sendJson({
       type: 'request-sync',
     });
