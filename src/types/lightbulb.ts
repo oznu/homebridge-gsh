@@ -61,10 +61,12 @@ export class Lightbulb {
 
     // check if the bulb has color
     if (service.characteristics.find(x => x.type === Characteristic.Hue)) {
-      response.spectrumHSV = {
-        hue: service.characteristics.find(x => x.type === Characteristic.Hue).value,
-        saturation: service.characteristics.find(x => x.type === Characteristic.Saturation).value,
-        value: 1,
+      response.color = {
+        spectrumHsv: {
+          hue: service.characteristics.find(x => x.type === Characteristic.Hue).value,
+          saturation: service.characteristics.find(x => x.type === Characteristic.Saturation).value,
+          value: 1,
+        },
       };
     }
 

@@ -148,7 +148,8 @@ export default class Gsh {
       },
     }).catch(async (err) => {
       await this.userNotLinkedCache.set(clientId, true);
-      console.log(`Report State Failed ::${clientId}:`, err);
+      console.log(`Report State Failed ::${clientId} Request:`, JSON.stringify(states));
+      console.log(`Report State Failed ::${clientId} Response:`, JSON.stringify(err));
     });
   }
 
