@@ -57,7 +57,7 @@ export class Plugin {
             setTimeout(() => {
               this.log.debug('Sending full post-sync state report');
               this.hap.sendFullStateReport();
-            }, 5000);
+            }, 10000);
             return res(await this.onSync(req.body, req.headers));
           case 'action.devices.QUERY':
             return res(await this.onQuery(req.body, req.headers));
