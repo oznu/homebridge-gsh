@@ -64,7 +64,7 @@ export class Lightbulb {
       response.color = {
         spectrumHsv: {
           hue: service.characteristics.find(x => x.type === Characteristic.Hue).value,
-          saturation: service.characteristics.find(x => x.type === Characteristic.Saturation).value,
+          saturation: service.characteristics.find(x => x.type === Characteristic.Saturation).value / 100,
           value: 1,
         },
       };
@@ -111,7 +111,7 @@ export class Lightbulb {
           }, {
             aid: service.aid,
             iid: service.characteristics.find(x => x.type === Characteristic.Saturation).iid,
-            value: command.execution[0].params.color.spectrumHSV.saturation,
+            value: command.execution[0].params.color.spectrumHSV.saturation * 100,
           }],
         };
       }

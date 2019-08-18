@@ -116,4 +116,12 @@ export default class Wss extends EventEmitter {
     this.emit(this.getClientListener(clientId), message);
   }
 
+  /**
+   * Checks if the client is connected
+   * @param clientId
+   */
+  public isConnected(clientId): boolean {
+    return (this.listenerCount(this.getClientListener(clientId)) > 0);
+  }
+
 }

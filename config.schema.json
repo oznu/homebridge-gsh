@@ -3,7 +3,7 @@
   "pluginType": "platform",
   "singular": true,
   "headerDisplay": "## Homebridge Config UI X Upgrade Required\nhomebridge-config-ui-x v4.6.0 or later is required to configure this plugin correctly. If you are seeing this message you need to upgrade (or reload the UI).\n",
-  "footerDisplay": "Search for [Homebridge in the Google Home app](https://assistant.google.com/services/a/uid/000000b558f0d5d1?hl=en) and link the action to complete setup. To enable the action you will need to add English as one of your assistant languages.",
+  "footerDisplay": "Search for [Homebridge in the Google Home app](https://assistant.google.com/services/a/uid/000000b558f0d5d1?hl=en) and link the action to complete setup.",
   "schema": {
     "type": "object",
     "properties": {

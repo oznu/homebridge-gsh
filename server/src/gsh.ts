@@ -74,7 +74,6 @@ export default class Gsh {
     const requestId = uuidv4();
     const payload = {
       body,
-      headers,
       requestId,
       requestTime: new Date().toISOString(),
     };
@@ -86,27 +85,48 @@ export default class Gsh {
   }
 
   async sendToClient(clientId, requestId, intent, payload) {
+    // if disconnecting, add user to the not linked cache
+    if (intent === 'action.devices.DISCONNECT') {
+      await this.userNotLinkedCache.set(clientId, true);
+    }
+
     return new Promise(async (resolve, reject) => {
-      console.log(requestId, `:: ${intent} :: Request To ${clientId}:`, '\n', JSON.stringify(payload, null, 4));
+      // check the corresponding client is actually connected
+      if (!core.wss.isConnected(clientId)) {
+        console.log(requestId, `:: ${intent} :: ${clientId} Homebridge is not connected`);
 
-      core.wss.sendToClient(clientId, payload);
+        if (intent === 'action.devices.DISCONNECT') {
+          return resolve({
+            requestId: payload.body.requestId,
+            payload: {},
+          });
+        }
 
-      // if disconnecting, add user to the not linked cache
-      if (intent === 'action.devices.DISCONNECT') {
-        await this.userNotLinkedCache.set(clientId, true);
+        return resolve({
+          requestId: payload.body.requestId,
+          payload: {
+            errorCode: 'deviceOffline',
+            status: 'ERROR',
+          },
+        });
       }
+
+      // send request to client
+      console.log(requestId, `:: ${intent} :: Request To ${clientId}:`, JSON.stringify(payload));
+      core.wss.sendToClient(clientId, payload);
 
       // Handle Timeouts
       const timeoutHandler = setTimeout(() => {
         console.log(requestId, `:: ${intent} :: Timeout From ${clientId}`);
         core.wss.removeAllListeners(requestId);
 
-        // return a timeout error
+        // return a timeout error, or missingSubscription if the intent is to sync
         // https://developers.google.com/actions/smarthome/develop/process-intents#error-responses
         return resolve({
           requestId: payload.body.requestId,
           payload: {
             errorCode: 'timeout',
+            status: 'ERROR',
           },
         });
 
@@ -125,7 +145,7 @@ export default class Gsh {
           response.payload.agentUserId = clientId;
         }
 
-        console.log(requestId, `:: ${intent} :: Response From ${clientId}:`, '\n' + JSON.stringify(response, null, 4));
+        console.log(requestId, `:: ${intent} :: Response From ${clientId}`, JSON.stringify(response));
         return resolve(response);
       });
     });
@@ -148,8 +168,8 @@ export default class Gsh {
       },
     }).catch(async (err) => {
       await this.userNotLinkedCache.set(clientId, true);
-      console.log(`Report State Failed ::${clientId} Request:`, JSON.stringify(states));
-      console.log(`Report State Failed ::${clientId} Response:`, JSON.stringify(err));
+      console.log(`Report State Failed :: ${clientId} Request:`, JSON.stringify(states));
+      console.log(`Report State Failed :: ${clientId} Response:`, JSON.stringify(err));
     });
   }
 
@@ -160,12 +180,11 @@ export default class Gsh {
     }
 
     console.log(`Got sync request from ${clientId}`);
-    try {
-      return await this.app.requestSync(clientId);
-    } catch (e) {
-      await this.userNotLinkedCache.set(clientId, true);
-      console.error(`Sync Request Failed :: ${clientId}:`, e);
-    }
+    return await this.app.requestSync(clientId)
+      .catch(async (err) => {
+        await this.userNotLinkedCache.set(clientId, true);
+        console.error(`Sync Request Failed :: ${clientId}:`, JSON.stringify(err));
+      });
   }
 
 }

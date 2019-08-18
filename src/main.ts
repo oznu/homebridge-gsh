@@ -47,7 +47,7 @@ export class Plugin {
       // check we are ready to receive incoming request
       if (!this.hap.ready) {
         this.log.info('Devices Not Ready');
-        return res(this.deviceNotReady(req.body, req.headers));
+        return res(this.deviceNotReady(req.body));
       }
 
       for (const input of req.body.inputs) {
@@ -58,13 +58,13 @@ export class Plugin {
               this.log.debug('Sending full post-sync state report');
               this.hap.sendFullStateReport();
             }, 10000);
-            return res(await this.onSync(req.body, req.headers));
+            return res(await this.onSync(req.body));
           case 'action.devices.QUERY':
-            return res(await this.onQuery(req.body, req.headers));
+            return res(await this.onQuery(req.body));
           case 'action.devices.EXECUTE':
-            return res(await this.onExecute(req.body, req.headers));
+            return res(await this.onExecute(req.body));
           case 'action.devices.DISCONNECT':
-            return res(await this.onDisconnect(req.body, req.headers));
+            return res(await this.onDisconnect(req.body));
           default:
             this.log.error(`ERROR - Unknown Intent: ${input.intent}`);
             break;
@@ -73,7 +73,7 @@ export class Plugin {
     });
   }
 
-  async onSync(body, headers) {
+  async onSync(body) {
     this.log.info('Received SYNC intent');
     this.log.debug(JSON.stringify(body, null, 2));
 
@@ -90,7 +90,7 @@ export class Plugin {
     };
   }
 
-  async onQuery(body, headers) {
+  async onQuery(body) {
     this.log.info('Received QUERY intent');
     this.log.debug(JSON.stringify(body, null, 2));
 
@@ -106,7 +106,7 @@ export class Plugin {
     };
   }
 
-  async onExecute(body, headers) {
+  async onExecute(body) {
     this.log.info('Received EXECUTE intent');
     this.log.debug(JSON.stringify(body, null, 2));
 
@@ -122,7 +122,7 @@ export class Plugin {
     };
   }
 
-  async onDisconnect(body, headers) {
+  async onDisconnect(body) {
     this.log.info('Received DISCONNECT intent');
     this.log.debug(JSON.stringify(body, null, 2));
     return {
@@ -131,7 +131,7 @@ export class Plugin {
     };
   }
 
-  deviceNotReady(body, headers) {
+  deviceNotReady(body) {
     return {
       requestId: body.requestId,
       payload: {
