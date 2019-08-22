@@ -14,6 +14,7 @@ import * as  Auth0Strategy from 'passport-auth0';
 
 import authRouter from './routes/auth';
 import userRouter from './routes/user';
+import statsRouter from './routes/stats';
 
 // Create Express server
 const app = express();
@@ -54,6 +55,9 @@ app.get('/', serveSpa);
 
 // static assets
 app.use(express.static(path.resolve(__dirname, '../static')));
+
+// auth-free routes
+app.use('/stats', statsRouter);
 
 // config express-session
 const sess = {

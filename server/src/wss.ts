@@ -124,4 +124,11 @@ export default class Wss extends EventEmitter {
     return (this.listenerCount(this.getClientListener(clientId)) > 0);
   }
 
+  /**
+   * Return the number of currently connected clients
+   */
+  public countConnectedClients(): number {
+    return this.wss.clients.size;
+  }
+
 }
