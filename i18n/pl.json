@@ -1,0 +1,5 @@
+{
+  "auth0.message_consent": "Logując się, zezwalasz Google na dostęp do swoich urządzeń.",
+  "google_action.directory.message_short_description": "Kontroluj swoje urządzenia za pomocą Asystenta Google",
+  "google_action.directory.message_full_description": "Dzięki tej wtyczce będziesz mógł kontrolować swoje urządzenia podłączone do Homebridge za pomocą Asystenta Google."
+}
