@@ -1,0 +1,5 @@
+{
+  "auth0.message_consent": "En vous connectant, vous autorisez Google à accéder à vos appareils.",
+  "google_action.directory.message_short_description": "Contrôlez vos appareils Homebridge depuis Google Assistant",
+  "google_action.directory.message_full_description": "Avec l'action Homebridge, vous pourrez contrôler vos appareils connectés supportés à votre instance locale Homebridge depuis Google Assistant."
+}
