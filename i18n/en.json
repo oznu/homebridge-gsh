@@ -1,0 +1,5 @@
+{		
+   "auth0.message_consent": "By signing in, you are authorizing Google to access your devices.",		
+   "google_action.directory.message_short_description": "Control your Homebridge devices from Google Assistant",		
+   "google_action.directory.message_full_description": "With the Homebridge skill you'll be able to control your supported devices connected to your local Homebridge instance from the Google Assistant."		
+ }
