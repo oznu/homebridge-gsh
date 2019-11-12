@@ -1,5 +1,5 @@
 {
   "auth0.message_consent": "Ved at logge ind, giver du Google lov til at få adgang til dine enheder.",
   "google_action.directory.message_short_description": "Administrér dine Homebridge-enheder fra Google Assistant.",
-  "google_action.directory.message_full_description": "Med Homebridge kan du administrere dine understøttede enheder, der er forbundet til din lokale Homebridge instance, fra Google Assistant."
+  "google_action.directory.message_full_description": "Med denne Homebridge skill kan du administrere dine understøttede enheder, der er forbundet til din lokale Homebridge instance, fra Google Assistant."
 }
