@@ -5,7 +5,8 @@
   ],
   "linterOptions": {
     "exclude": [
-      "migration/*.ts"
+      "migration/*.ts",
+      "node_modules/**"
     ]
   },
   "jsRules": {
