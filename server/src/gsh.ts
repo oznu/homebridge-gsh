@@ -1,6 +1,6 @@
+import * as crypto from 'crypto';
 import * as uuidv4 from 'uuid/v4';
 import * as rp from 'request-promise';
-import * as cacheManager from 'cache-manager';
 import * as fs from 'fs-extra';
 
 import {
@@ -18,8 +18,6 @@ import { core } from './index';
 
 export default class Gsh {
   app: SmartHomeApp;
-  userProfileCache = cacheManager.caching({ store: 'memory', max: 1000, ttl: 3600 });
-  userNotLinkedCache = cacheManager.caching({ store: 'memory', max: 1000, ttl: 3600 });
 
   constructor() {
     this.app = smarthome({
@@ -44,8 +42,15 @@ export default class Gsh {
   }
 
   async verifyUser(headers) {
+    if (!headers.authorization) {
+      throw new UnauthorizedError();
+    }
+
+    // hash the auth header to safely use as a cache key
+    const authorizationHeaderHash = crypto.createHash('sha256').update(headers.authorization).digest('hex');
+
     // load profile from memory cache
-    let profile = await this.userProfileCache.get(headers.authorization);
+    let profile = await this.cacheGet('profile', authorizationHeaderHash);
 
     if (!profile) {
       // if the profile was not found do a lookup
@@ -56,7 +61,7 @@ export default class Gsh {
             authorization: headers.authorization,
           },
         });
-        await this.userProfileCache.set(headers.authorization, profile);
+        await this.cacheSet('profile', authorizationHeaderHash, profile);
       } catch (e) {
         throw new UnauthorizedError();
       }
@@ -70,7 +75,7 @@ export default class Gsh {
     delete headers.authorization;
 
     // build payload
-    const clientId = profile.sub;
+    const clientId = profile.sub.toString();
     const requestId = uuidv4();
     const payload = {
       body,
@@ -79,7 +84,7 @@ export default class Gsh {
     };
 
     // clear user from not linked cache
-    await this.userNotLinkedCache.del(clientId);
+    await this.cacheDel('not-linked', clientId);
 
     return await this.sendToClient(clientId, requestId, intent, payload);
   }
@@ -87,7 +92,7 @@ export default class Gsh {
   async sendToClient(clientId, requestId, intent, payload) {
     // if disconnecting, add user to the not linked cache
     if (intent === 'action.devices.DISCONNECT') {
-      await this.userNotLinkedCache.set(clientId, true);
+      await this.cacheSet('not-linked', clientId, true);
     }
 
     return new Promise(async (resolve, reject) => {
@@ -156,7 +161,7 @@ export default class Gsh {
   }
 
   async sendReportState(clientId: string, requestId: string, states: SmartHomeV1ReportStateRequest['payload']['devices']) {
-    if (await this.userNotLinkedCache.get(clientId)) {
+    if (await this.cacheGet('not-linked', clientId)) {
       console.log(`[${process.pid}]`, `Ignoring Report State from ${clientId} as they are not linked`);
       return;
     }
@@ -171,14 +176,14 @@ export default class Gsh {
         },
       },
     }).catch(async (err) => {
-      await this.userNotLinkedCache.set(clientId, true);
+      await this.cacheSet('not-linked', clientId, true);
       console.log(`[${process.pid}]`, `Report State Failed :: ${clientId} Request:`, JSON.stringify(states));
       console.log(`[${process.pid}]`, `Report State Failed :: ${clientId} Response:`, JSON.stringify(err));
     });
   }
 
   async requestSync(clientId: string) {
-    if (await this.userNotLinkedCache.get(clientId)) {
+    if (await this.cacheGet('not-linked', clientId)) {
       console.log(`[${process.pid}]`, `Ignoring Sync Request from ${clientId} as they are not linked`);
       return;
     }
@@ -186,9 +191,35 @@ export default class Gsh {
     console.log(`[${process.pid}]`, `Got sync request from ${clientId}`);
     return await this.app.requestSync(clientId)
       .catch(async (err) => {
-        await this.userNotLinkedCache.set(clientId, true);
+        await this.cacheSet('not-linked', clientId, true);
         console.error(`[${process.pid}]`, `Sync Request Failed :: ${clientId}:`, JSON.stringify(err));
       });
+  }
+
+  /**
+   * Set Item In Cache
+   */
+  async cacheSet(type: 'profile' | 'not-linked', key: string, value: string | boolean) {
+    return await core.pub.setex(type + '::' + key, 3600, JSON.stringify(value));
+  }
+
+  /**
+   * Get Item From Cache
+   */
+  async cacheGet(type: 'profile' | 'not-linked', key: string) {
+    const value = await core.pub.get(type + '::' + key);
+    if (value) {
+      return JSON.parse(value);
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * Remove Item From Cache
+   */
+  async cacheDel(type: 'profile' | 'not-linked', key: string) {
+    return await core.pub.del(type + '::' + key);
   }
 
 }
