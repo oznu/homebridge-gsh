@@ -2,6 +2,7 @@ import * as url from 'url';
 import * as querystring from 'querystring';
 import * as EventEmitter from 'events';
 import * as crypto from 'crypto';
+import { Redis } from 'ioredis';
 import { Server } from 'ws';
 import * as jwt from 'jsonwebtoken';
 
@@ -9,9 +10,14 @@ import { core } from './index';
 
 export default class Wss extends EventEmitter {
   public wss: Server;
+  public pub: Redis;
+  public sub: Redis;
 
-  constructor(server) {
+  constructor(server, sub, pub) {
     super();
+
+    this.sub = sub;
+    this.pub = pub;
 
     this.wss = new Server({
       server,
@@ -19,6 +25,11 @@ export default class Wss extends EventEmitter {
     });
 
     this.wss.on('connection', this.handleConnection.bind(this));
+
+    // subscribe to redis
+    this.sub.on('message', (channel: string, data: string) => {
+      this.emit(channel, data);
+    });
   }
 
   /**
@@ -48,7 +59,7 @@ export default class Wss extends EventEmitter {
     const deviceId = req.$deviceId;
 
     const remoteIp = req.headers['x-real-ip'] || req.connection.remoteAddress;
-    console.log('Client Connected:', remoteIp, clientId, deviceId);
+    console.log(`[${process.pid}]`, 'Client Connected:', remoteIp, clientId, deviceId);
 
     const clientListenerName = this.getClientListener(clientId);
 
@@ -59,7 +70,7 @@ export default class Wss extends EventEmitter {
       try {
         data = JSON.parse(payload);
       } catch (e) {
-        console.log('ERROR ::', remoteIp, clientId, 'Sent a response that is not valid JSON');
+        console.log(`[${process.pid}]`, 'ERROR ::', remoteIp, clientId, 'Sent a response that is not valid JSON');
         return;
       }
 
@@ -69,7 +80,7 @@ export default class Wss extends EventEmitter {
           break;
         }
         case ('response'): {
-          this.emit(data.requestId, data.body);
+          this.pub.publish(data.requestId, JSON.stringify(data.body));
           break;
         }
         case ('request-sync'): {
@@ -77,25 +88,27 @@ export default class Wss extends EventEmitter {
           break;
         }
         default: {
-          console.log('ERROR ::', remoteIp, clientId, 'Received unknown message payload');
+          console.log(`[${process.pid}]`, 'ERROR ::', remoteIp, clientId, 'Received unknown message payload');
           break;
         }
       }
     });
 
     // listen for incoming messages from google smart home that should be sent to the users homebridge instance
-    const clientEventHandler = (data) => {
+    const clientEventHandler = (data: string) => {
       if (ws.readyState === 1) {
-        ws.send(JSON.stringify(data));
+        ws.send(data);
       }
     };
 
+    this.sub.subscribe(clientListenerName);
     this.on(clientListenerName, clientEventHandler);
 
     // cleanup listeners when iot device disconnects
     ws.on('close', () => {
+      this.sub.unsubscribe(clientListenerName);
       this.removeListener(clientListenerName, clientEventHandler);
-      console.log('Client Disconnected:', remoteIp, clientId, deviceId);
+      console.log(`[${process.pid}]`, 'Client Disconnected:', remoteIp, clientId, deviceId);
     });
   }
 
@@ -113,15 +126,17 @@ export default class Wss extends EventEmitter {
    * @param message
    */
   public sendToClient(clientId, message) {
-    this.emit(this.getClientListener(clientId), message);
+    // this.emit(this.getClientListener(clientId), message);
+    this.pub.publish(this.getClientListener(clientId), JSON.stringify(message));
   }
 
   /**
    * Checks if the client is connected
    * @param clientId
    */
-  public isConnected(clientId): boolean {
-    return (this.listenerCount(this.getClientListener(clientId)) > 0);
+  public async isConnected(clientId): Promise<boolean> {
+    const [channel, count] = await this.pub.send_command('PUBSUB', ['NUMSUB', this.getClientListener(clientId)]);
+    return (count > 0);
   }
 
   /**

@@ -92,8 +92,8 @@ export default class Gsh {
 
     return new Promise(async (resolve, reject) => {
       // check the corresponding client is actually connected
-      if (!core.wss.isConnected(clientId)) {
-        console.log(requestId, `:: ${intent} :: ${clientId} Homebridge is not connected`);
+      if (!await core.wss.isConnected(clientId)) {
+        console.log(`[${process.pid}]`, requestId, `:: ${intent} :: ${clientId} Homebridge is not connected`);
 
         if (intent === 'action.devices.DISCONNECT') {
           return resolve({
@@ -112,13 +112,15 @@ export default class Gsh {
       }
 
       // send request to client
-      console.log(requestId, `:: ${intent} :: Request To ${clientId}:`, JSON.stringify(payload));
+      await core.sub.subscribe(requestId);
+      console.log(`[${process.pid}]`, requestId, `:: ${intent} :: Request To ${clientId}:`, JSON.stringify(payload));
       core.wss.sendToClient(clientId, payload);
 
       // Handle Timeouts
       const timeoutHandler = setTimeout(() => {
-        console.log(requestId, `:: ${intent} :: Timeout From ${clientId}`);
+        console.log(`[${process.pid}]`, requestId, `:: ${intent} :: Timeout From ${clientId}`);
         core.wss.removeAllListeners(requestId);
+        core.sub.unsubscribe(requestId);
 
         // return a timeout error, or missingSubscription if the intent is to sync
         // https://developers.google.com/actions/smarthome/develop/process-intents#error-responses
@@ -135,6 +137,8 @@ export default class Gsh {
       // Handle Response
       core.wss.once(requestId, (response) => {
         clearTimeout(timeoutHandler);
+        core.sub.unsubscribe(requestId);
+        response = JSON.parse(response);
 
         if (!response.payload) {
           response.payload = {};
@@ -145,7 +149,7 @@ export default class Gsh {
           response.payload.agentUserId = clientId;
         }
 
-        console.log(requestId, `:: ${intent} :: Response From ${clientId}`, JSON.stringify(response));
+        console.log(`[${process.pid}]`, requestId, `:: ${intent} :: Response From ${clientId}`, JSON.stringify(response));
         return resolve(response);
       });
     });
@@ -153,11 +157,11 @@ export default class Gsh {
 
   async sendReportState(clientId: string, requestId: string, states: SmartHomeV1ReportStateRequest['payload']['devices']) {
     if (await this.userNotLinkedCache.get(clientId)) {
-      console.log(`Ignoring Report State from ${clientId} as they are not linked`);
+      console.log(`[${process.pid}]`, `Ignoring Report State from ${clientId} as they are not linked`);
       return;
     }
 
-    console.log(`Sending Report State from ${clientId} to Google API`);
+    console.log(`[${process.pid}]`, `Sending Report State from ${clientId} to Google API`);
     return await this.app.reportState({
       requestId,
       agentUserId: clientId,
@@ -168,22 +172,22 @@ export default class Gsh {
       },
     }).catch(async (err) => {
       await this.userNotLinkedCache.set(clientId, true);
-      console.log(`Report State Failed :: ${clientId} Request:`, JSON.stringify(states));
-      console.log(`Report State Failed :: ${clientId} Response:`, JSON.stringify(err));
+      console.log(`[${process.pid}]`, `Report State Failed :: ${clientId} Request:`, JSON.stringify(states));
+      console.log(`[${process.pid}]`, `Report State Failed :: ${clientId} Response:`, JSON.stringify(err));
     });
   }
 
   async requestSync(clientId: string) {
     if (await this.userNotLinkedCache.get(clientId)) {
-      console.log(`Ignoring Sync Request from ${clientId} as they are not linked`);
+      console.log(`[${process.pid}]`, `Ignoring Sync Request from ${clientId} as they are not linked`);
       return;
     }
 
-    console.log(`Got sync request from ${clientId}`);
+    console.log(`[${process.pid}]`, `Got sync request from ${clientId}`);
     return await this.app.requestSync(clientId)
       .catch(async (err) => {
         await this.userNotLinkedCache.set(clientId, true);
-        console.error(`Sync Request Failed :: ${clientId}:`, JSON.stringify(err));
+        console.error(`[${process.pid}]`, `Sync Request Failed :: ${clientId}:`, JSON.stringify(err));
       });
   }
 
