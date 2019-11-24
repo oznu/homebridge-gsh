@@ -60,9 +60,3 @@ Start the server:
 ```
 npm run start:server
 ```
-
-## Contributing To Translations
-
-Additional language translations, or improvements to existing translations are most welcome.  Translations can be found here: 
-
-https://github.com/oznu/homebridge-gsh/tree/master/i18n

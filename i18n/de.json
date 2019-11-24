@@ -1,5 +1,0 @@
-{
-"auth0.message_consent": "Durch die Anmeldung erlauben Sie Google, auf Ihre Geräte zuzugreifen.",
-"google_action.directory.message_short_description": "Steuern Sie Ihre Homebridge Geräte mit dem Google Assistant",
-"google_action.directory.message_full_description": "Mit dem Homebridge Skill können Sie Ihre unterstützten Geräte, die mit Ihrer lokalen Homebridge Instanz verbunden sind, über den Google Assistant steuern."
-}

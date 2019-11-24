@@ -1,5 +1,0 @@
-{
-  "auth0.message_consent": "Выполняя вход, вы позволяете Google получить доступ к вашим устройствам.",
-  "google_action.directory.message_short_description": "Управляйте вашими устройствами Homebridge с помощью Ассистента Google.",
-  "google_action.directory.message_full_description": "Вы сможете управлять аксессуарами, связанными с локальной копией Homebridge с помощью Google Ассистента."
-}
