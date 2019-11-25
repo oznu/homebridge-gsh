@@ -25,6 +25,10 @@
         "required": true,
         "default": "Keep your token a secret!"
       },
+      "twoFactorAuthPin": {
+        "placeholder": "Two Factor Authentication Pin Code",
+        "type": "integer"
+      },
       "debug": {
         "title": "Enable Debug Logging",
         "type": "boolean"
@@ -60,6 +64,14 @@
           "helpvalue": "<h5>Debug Mode</h5><em class='primary-text'>Enabling debug mode can help troubleshoot problems. If you are experiencing problems with this plugin you should enable debug logging and include the results in your support request.</em>"
         },
         "debug",
+        {
+          "type": "help",
+          "helpvalue": "<h5>Two Factor Authentication</h5><em class='primary-text'>If you provide a two factor authentication code, the Google Assistant will prompt you for your code before performing certain actions. e.g. unlocking a Lock Mechanism.</em>"
+        },
+        {
+          "notitle": true,
+          "key": "twoFactorAuthPin"
+        },
         {
           "type": "help",
           "helpvalue": "<h5>Instance Blacklist</h5><em class='primary-text'>Enter the usernames of any Homebridge instances on your network that you don't want to be able to control from the Google Assistant.</em>"

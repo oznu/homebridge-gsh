@@ -9,13 +9,15 @@ import { Log } from './logger';
 
 import { Door } from './types/door';
 import { Fan } from './types/fan';
+import { Fanv2 } from './types/fan-v2';
 import { GarageDoorOpener } from './types/garage-door-opener';
 import { Lightbulb } from './types/lightbulb';
 import { LockMechanism } from './types/lock-mechanism';
 import { Switch } from './types/switch';
+import { Television } from './types/television';
+import { Thermostat } from './types/thermostat';
 import { Window } from './types/window';
 import { WindowCovering } from './types/window-covering';
-import { Thermostat } from './types/thermostat';
 
 export class Hap {
   socket;
@@ -31,11 +33,13 @@ export class Hap {
   types = {
     Door: new Door(),
     Fan: new Fan(),
+    Fanv2: new Fanv2(),
     GarageDoorOpener: new GarageDoorOpener(),
     Lightbulb: new Lightbulb(),
     LockMechanism: new LockMechanism(),
     Outlet: new Switch('action.devices.types.OUTLET'),
     Switch: new Switch('action.devices.types.SWITCH'),
+    Television: new Television(),
     Thermostat: new Thermostat(),
     Window: new Window(),
     WindowCovering: new WindowCovering(),
@@ -49,6 +53,7 @@ export class Hap {
 
   /* types of characteristics to track */
   evTypes = [
+    Characteristic.Active,
     Characteristic.On,
     Characteristic.CurrentPosition,
     Characteristic.TargetPosition,
@@ -189,26 +194,46 @@ export class Hap {
         const service = this.services.find(x => x.uniqueId === device.id);
 
         if (service) {
-          const payload = this.types[service.serviceType].execute(service, command);
 
-          await new Promise((resolve, reject) => {
-            this.homebridge.HAPcontrol(service.instance.ipAddress, service.instance.port, JSON.stringify(payload), (err) => {
-              if (!err) {
-                response.push({
-                  ids: [device.id],
-                  status: 'SUCCESS',
-                });
-              } else {
-                this.log.error('Failed to control an accessory. Make sure all your Homebridge instances are using the same PIN.');
-                this.log.error(err.message);
-                response.push({
-                  ids: [device.id],
-                  status: 'ERROR',
-                });
-              }
-              return resolve();
+          // check if two factor auth is required, and if we have it
+          if (this.config.twoFactorAuthPin && this.types[service.serviceType].twoFactorRequired &&
+            this.types[service.serviceType].is2faRequired(command) &&
+            !(command.execution.length && command.execution[0].challenge &&
+              command.execution[0].challenge.pin === this.config.twoFactorAuthPin.toString()
+            )
+          ) {
+            this.log.info('Requesting Two Factor Authentication Pin');
+            response.push({
+              ids: [device.id],
+              status: 'ERROR',
+              errorCode: 'challengeNeeded',
+              challengeNeeded: {
+                type: 'pinNeeded',
+              },
             });
-          });
+          } else {
+            // process the request
+            const payload = this.types[service.serviceType].execute(service, command);
+
+            await new Promise((resolve, reject) => {
+              this.homebridge.HAPcontrol(service.instance.ipAddress, service.instance.port, JSON.stringify(payload), (err) => {
+                if (!err) {
+                  response.push({
+                    ids: [device.id],
+                    status: 'SUCCESS',
+                  });
+                } else {
+                  this.log.error('Failed to control an accessory. Make sure all your Homebridge instances are using the same PIN.');
+                  this.log.error(err.message);
+                  response.push({
+                    ids: [device.id],
+                    status: 'ERROR',
+                  });
+                }
+                return resolve();
+              });
+            });
+          }
 
         }
       }

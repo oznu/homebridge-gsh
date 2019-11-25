@@ -1,6 +1,8 @@
 import { Characteristic } from '../hap-types';
 
 export class LockMechanism {
+  public twoFactorRequired = true;
+
   sync(service) {
     return {
       id: service.uniqueId,
@@ -82,4 +84,19 @@ export class LockMechanism {
     }
   }
 
+  is2faRequired(command): boolean {
+    if (!command.execution.length) {
+      return false;
+    }
+
+    switch (command.execution[0].command) {
+      case ('action.devices.commands.LockUnlock'): {
+        if (command.execution[0].params.lock === false) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
 }

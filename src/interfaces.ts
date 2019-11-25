@@ -3,6 +3,7 @@ export interface PluginConfig {
   name: string;
   token: string;
   debug?: boolean;
+  twoFactorAuthPin: number;
   instanceBlacklist?: Array<string>;
   accessoryFilter?: Array<string>;
 }

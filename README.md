@@ -27,12 +27,14 @@ Control your supported [Homebridge](https://github.com/nfarina/homebridge) acces
     * Brightness
     * Color (Hue/Saturation)
 * Fan (On / Off)
+* Fan v2 (On / Off)
 * Window
 * Window Coverings
 * Door
 * Garage Door
 * Thermostat
-* Lock Mechanism
+* Television (On / Off)
+* Lock Mechanism (2FA support)
 
 *Note: Google Smart Home does not currently support "sensor" devices such as Temperature Sensors, Motion Sensors, Occupancy Sensors etc.*
 
