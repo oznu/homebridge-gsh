@@ -2,7 +2,6 @@
 
 import 'source-map-support/register';
 
-import * as cluster from 'cluster';
 import * as http from 'http';
 import * as dotenv from 'dotenv';
 import * as Redis from 'ioredis';
@@ -12,8 +11,6 @@ import gsh from './gsh';
 
 // Load environment variables from .env
 dotenv.config();
-
-const ports = [3000, 3001, 3002, 3003];
 
 class Core {
   private server;
@@ -31,22 +28,4 @@ class Core {
   }
 }
 
-let instance: Core;
-
-if (cluster.isMaster) {
-  // Fork workers.
-  for (const port of ports) {
-    cluster.fork({
-      GSH_WORKER_PORT: port,
-    });
-  }
-
-  cluster.on('exit', (worker, code, signal) => {
-    console.log(`${process.pid}] Worker died`);
-  });
-} else {
-  console.log(`[${process.pid}] Starting working on port ${process.env.GSH_WORKER_PORT}`);
-  instance = new Core(parseInt(process.env.GSH_WORKER_PORT, 10));
-}
-
-export const core = instance;
+export const core = new Core(parseInt(process.env.GSH_WORKER_PORT || '3000', 10));

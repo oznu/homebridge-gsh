@@ -59,7 +59,7 @@ export default class Wss extends EventEmitter {
     const deviceId = req.$deviceId;
 
     const remoteIp = req.headers['x-real-ip'] || req.connection.remoteAddress;
-    console.log(`[${process.pid}]`, 'Client Connected:', remoteIp, clientId, deviceId);
+    console.log('Client Connected:', remoteIp, clientId, deviceId);
 
     const clientListenerName = this.getClientListener(clientId);
 
@@ -70,7 +70,7 @@ export default class Wss extends EventEmitter {
       try {
         data = JSON.parse(payload);
       } catch (e) {
-        console.log(`[${process.pid}]`, 'ERROR ::', remoteIp, clientId, 'Sent a response that is not valid JSON');
+        console.log('ERROR ::', remoteIp, clientId, 'Sent a response that is not valid JSON');
         return;
       }
 
@@ -88,7 +88,7 @@ export default class Wss extends EventEmitter {
           break;
         }
         default: {
-          console.log(`[${process.pid}]`, 'ERROR ::', remoteIp, clientId, 'Received unknown message payload');
+          console.log('ERROR ::', remoteIp, clientId, 'Received unknown message payload');
           break;
         }
       }
@@ -108,7 +108,7 @@ export default class Wss extends EventEmitter {
     ws.on('close', () => {
       this.sub.unsubscribe(clientListenerName);
       this.removeListener(clientListenerName, clientEventHandler);
-      console.log(`[${process.pid}]`, 'Client Disconnected:', remoteIp, clientId, deviceId);
+      console.log('Client Disconnected:', remoteIp, clientId, deviceId);
     });
   }
 

@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { HomeModule } from './home/home.module';
 import { AboutModule } from './about/about.module';
 import { LinkAccountModule } from './link-account/link-account.module';
+import { LinkRequiredModule } from './link-required/link-required.module';
 import { TermsOfServiceModule } from './terms-of-service/terms-of-service.module';
 
 @NgModule({
@@ -20,6 +21,7 @@ import { TermsOfServiceModule } from './terms-of-service/terms-of-service.module
     AboutModule,
     TermsOfServiceModule,
     LinkAccountModule,
+    LinkRequiredModule,
     AppRoutingModule
   ],
   providers: [],
