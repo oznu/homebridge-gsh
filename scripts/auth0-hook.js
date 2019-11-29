@@ -1,5 +1,5 @@
 function (user, context, callback) {
-  if (context.clientName === 'Homebridge GSH') {
+  if (context.clientName === 'Homebridge GSH' && context.protocol === 'oidc-basic-profile') {
     request.post({
       url: 'https://homebridge-gsh.iot.oz.nu/user/is-connected',
       json: {
