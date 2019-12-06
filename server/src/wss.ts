@@ -104,11 +104,24 @@ export default class Wss extends EventEmitter {
     this.sub.subscribe(clientListenerName);
     this.on(clientListenerName, clientEventHandler);
 
+    // after 20 seconds check that we are subscribed to redis still
+    // we send this again to avoid race conditions which may occur due to late closures
+    const checkIfSubscribedTimeout = setTimeout(() => {
+      if (this.listenerCount(clientListenerName) > 0) {
+        this.sub.subscribe(clientListenerName);
+      }
+    }, 20000);
+
     // cleanup listeners when iot device disconnects
     ws.on('close', () => {
-      this.sub.unsubscribe(clientListenerName);
+      clearTimeout(checkIfSubscribedTimeout);
       this.removeListener(clientListenerName, clientEventHandler);
       console.log('Client Disconnected:', remoteIp, clientId, deviceId);
+
+      // only unsubscribe from redis if there are no other listers on this node
+      if (this.listenerCount(clientListenerName) === 0) {
+        this.sub.unsubscribe(clientListenerName);
+      }
     });
   }
 
