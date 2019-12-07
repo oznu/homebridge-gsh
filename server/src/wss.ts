@@ -32,7 +32,7 @@ export default class Wss extends EventEmitter {
       this.emit(channel, data);
     });
 
-    // subscribe to and listen for broadcast messages to sent to all clients
+    // subscribe to and listen for broadcast messages to send to all clients
     this.sub.subscribe('broadcast');
 
     this.on('broadcast', (message: string) => {
