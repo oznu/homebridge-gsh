@@ -24,7 +24,7 @@ Remove any sensative information.
 
 ```json
 Show your homebridge config.json here. 
-Remove any sensitive information, such as your homebridge-gsm / google-smarthome token.
+Remove any sensitive information, such as your homebridge-gsh / google-smarthome token.
 ```
 
 **Screenshots:**
@@ -35,7 +35,7 @@ Remove any sensitive information, such as your homebridge-gsm / google-smarthome
 * **Node.js Version**: <!-- node -v -->
 * **NPM Version**: <!-- npm -v -->
 * **Homebridge Version**: <!-- homebridge -V -->
-* **Homebridge GSM Plugin Version**:
+* **Homebridge GSH Plugin Version**:
 * **Homebridge Config UI X Plugin Version**:
 * **Operating System**: <!-- Raspbian / Ubuntu / Debian / Windows / macOS / Docker -->
 
