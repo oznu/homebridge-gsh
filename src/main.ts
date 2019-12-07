@@ -32,8 +32,12 @@ export class Plugin {
     });
 
     socket.on('json', async (req) => {
-      if (!req.body.inputs) {
-        // return 401
+      if (req.serverMessage) {
+        this.log.warn(req.serverMessage);
+      }
+
+      if (!req.body || !req.body.inputs) {
+        return;
       }
 
       const res = (response) => {

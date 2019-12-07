@@ -32,6 +32,19 @@ export default class Wss extends EventEmitter {
       this.emit(channel, data);
     });
 
+    // subscribe to and listen for broadcast messages to sent to all clients
+    this.sub.subscribe('broadcast');
+
+    this.on('broadcast', (message: string) => {
+      this.wss.clients.forEach((ws: WebSocket) => {
+        if (ws.readyState === 1) {
+          ws.send(JSON.stringify({
+            serverMessage: message,
+          }));
+        }
+      });
+    });
+
     // check for stale / broken connections
     // this will terminate any connections stale for more than 60 seconds
     setInterval(() => {
