@@ -4,6 +4,7 @@ import * as EventEmitter from 'events';
 import * as crypto from 'crypto';
 import { Redis } from 'ioredis';
 import { Server } from 'ws';
+import * as WebSocket from 'ws';
 import * as jwt from 'jsonwebtoken';
 
 import { core } from './index';
@@ -30,6 +31,18 @@ export default class Wss extends EventEmitter {
     this.sub.on('message', (channel: string, data: string) => {
       this.emit(channel, data);
     });
+
+    // check for stale / broken connections
+    // this will terminate any connections stale for more than 60 seconds
+    setInterval(() => {
+      this.wss.clients.forEach((ws: WebSocket) => {
+        if (ws['isAlive'] === false) {
+          console.log('Terminating Stale Client');
+          return ws.terminate();
+        }
+        ws['isAlive'] = false;
+      });
+    }, 30000);
   }
 
   /**
@@ -54,7 +67,9 @@ export default class Wss extends EventEmitter {
   /**
    * Handles the initial connection of the device
    */
-  private handleConnection(ws, req) {
+  private handleConnection(ws: WebSocket, req) {
+    ws['isAlive'] = true;
+
     const clientId = req.$clientId;
     const deviceId = req.$deviceId;
 
@@ -64,7 +79,7 @@ export default class Wss extends EventEmitter {
     const clientListenerName = this.getClientListener(clientId);
 
     // handle message response from the homebridge
-    ws.on('message', (payload) => {
+    ws.on('message', (payload: string) => {
       let data;
 
       try {
@@ -111,6 +126,11 @@ export default class Wss extends EventEmitter {
         this.sub.subscribe(clientListenerName);
       }
     }, 20000);
+
+    // set the isAlive flag every ping
+    ws.on('ping', () => {
+      ws['isAlive'] = true;
+    });
 
     // cleanup listeners when iot device disconnects
     ws.on('close', () => {

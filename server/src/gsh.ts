@@ -61,7 +61,7 @@ export default class Gsh {
             authorization: headers.authorization,
           },
         });
-        await this.cacheSet('profile', authorizationHeaderHash, profile);
+        await this.cacheSet('profile', authorizationHeaderHash, 129600, profile);
       } catch (e) {
         throw new UnauthorizedError();
       }
@@ -92,7 +92,7 @@ export default class Gsh {
   async sendToClient(clientId, requestId, intent, payload) {
     // if disconnecting, add user to the not linked cache
     if (intent === 'action.devices.DISCONNECT') {
-      await this.cacheSet('not-linked', clientId, true);
+      await this.cacheSet('not-linked', clientId, 3600, true);
     }
 
     return new Promise(async (resolve, reject) => {
@@ -176,7 +176,7 @@ export default class Gsh {
         },
       },
     }).catch(async (err) => {
-      await this.cacheSet('not-linked', clientId, true);
+      await this.cacheSet('not-linked', clientId, 3600, true);
       console.log(`Report State Failed :: ${clientId} Request:`, JSON.stringify(states));
       console.log(`Report State Failed :: ${clientId} Response:`, JSON.stringify(err));
     });
@@ -191,7 +191,7 @@ export default class Gsh {
     console.log(`Got sync request from ${clientId}`);
     return await this.app.requestSync(clientId)
       .catch(async (err) => {
-        await this.cacheSet('not-linked', clientId, true);
+        await this.cacheSet('not-linked', clientId, 3600, true);
         console.error(`Sync Request Failed :: ${clientId}:`, JSON.stringify(err));
       });
   }
@@ -199,8 +199,8 @@ export default class Gsh {
   /**
    * Set Item In Cache
    */
-  async cacheSet(type: 'profile' | 'not-linked', key: string, value: string | boolean) {
-    return await core.pub.setex(type + '::' + key, 3600, JSON.stringify(value));
+  async cacheSet(type: 'profile' | 'not-linked', key: string, ttl: number, value: string | boolean) {
+    return await core.pub.setex(type + '::' + key, ttl, JSON.stringify(value));
   }
 
   /**

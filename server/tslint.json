@@ -44,6 +44,9 @@
     "arrow-parens": false,
     "object-literal-sort-keys": false,
     "no-unused-expression": false,
+    "no-string-literal": [
+      false
+    ],
     "variable-name": [
       false
     ],
