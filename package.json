@@ -1,7 +1,7 @@
 {
   "name": "homebridge-gsh",
   "displayName": "Homebridge Google Smart Home",
-  "version": "1.1.1-beta.1",
+  "version": "1.1.1-beta.2",
   "description": "Google Smart Home",
   "license": "GPL-3.0",
   "author": "oznu <dev@oz.nu>",
@@ -53,20 +53,20 @@
   "dependencies": {
     "@oznu/ws-connect": "^1.0.0",
     "fs-extra": "^8.1.0",
-    "hap-node-client": "0.0.26",
-    "rxjs": "^6.5.2"
+    "hap-node-client": "0.0.27",
+    "rxjs": "^6.5.3"
   },
   "devDependencies": {
-    "@types/fs-extra": "^8.0.0",
-    "@types/node": "^12.6.8",
-    "@types/ws": "^6.0.1",
-    "concurrently": "^4.1.1",
-    "hap-nodejs": "^0.5.3",
-    "nodemon": "^1.19.1",
-    "request-promise": "^4.2.4",
-    "rimraf": "^2.6.3",
-    "ts-node": "^8.3.0",
-    "tslint": "^5.18.0",
-    "typescript": "^3.5.3"
+    "@types/fs-extra": "^8.0.1",
+    "@types/node": "^12.12.18",
+    "@types/ws": "^6.0.4",
+    "concurrently": "^5.0.1",
+    "hap-nodejs": "^0.5.4",
+    "nodemon": "^2.0.2",
+    "request-promise": "^4.2.5",
+    "rimraf": "^3.0.0",
+    "ts-node": "^8.5.4",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.3"
   }
 }
