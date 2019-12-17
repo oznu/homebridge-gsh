@@ -2,6 +2,18 @@ import { Characteristic } from '../hap-types';
 
 export class Thermostat {
   sync(service) {
+    const availableThermostatModes = ['off', 'heat', 'cool'];
+
+    if (service.characteristics.find(x => x.type === Characteristic.CoolingThresholdTemperature) &&
+      service.characteristics.find(x => x.type === Characteristic.HeatingThresholdTemperature)) {
+      availableThermostatModes.push('heatcool');
+    } else {
+      availableThermostatModes.push('auto');
+    }
+
+    console.log('GSH - THERMOSTAT DISPLAY UNITS:',
+      JSON.stringify(service.characteristics.find(x => x.type === Characteristic.TemperatureDisplayUnits)));
+
     return {
       id: service.uniqueId,
       type: 'action.devices.types.THERMOSTAT',
@@ -9,7 +21,7 @@ export class Thermostat {
         'action.devices.traits.TemperatureSetting',
       ],
       attributes: {
-        availableThermostatModes: 'off,heat,cool,auto',
+        availableThermostatModes: availableThermostatModes.join(','),
         thermostatTemperatureUnit: service.characteristics.find(x => x.type === Characteristic.TemperatureDisplayUnits).value ? 'F' : 'C',
       },
       name: {
@@ -51,6 +63,19 @@ export class Thermostat {
       response.thermostatHumidityAmbient = service.characteristics.find(x => x.type === Characteristic.CurrentRelativeHumidity).value;
     }
 
+    // check if device reports CoolingThresholdTemperature and HeatingThresholdTemperature
+    if (service.characteristics.find(x => x.type === Characteristic.CoolingThresholdTemperature) &&
+      service.characteristics.find(x => x.type === Characteristic.HeatingThresholdTemperature)) {
+
+      // translate mode
+      if (response.thermostatMode === 'auto') {
+        response.thermostatMode = 'heatcool';
+      }
+
+      response.thermostatTemperatureSetpointLow = service.characteristics.find(x => x.type === Characteristic.HeatingThresholdTemperature).value;
+      response.thermostatTemperatureSetpointHigh = service.characteristics.find(x => x.type === Characteristic.CoolingThresholdTemperature).value;
+    }
+
     return response;
   }
 
@@ -66,6 +91,7 @@ export class Thermostat {
           heat: 1,
           cool: 2,
           auto: 3,
+          heatcool: 3,
         };
 
         return {
@@ -83,6 +109,21 @@ export class Thermostat {
             iid: service.characteristics.find(x => x.type === Characteristic.TargetTemperature).iid,
             value: Math.round(command.execution[0].params.thermostatTemperatureSetpoint),
           }],
+        };
+      }
+      case ('action.devices.commands.ThermostatTemperatureSetRange'): {
+        return {
+          characteristics: [
+            {
+              aid: service.aid,
+              iid: service.characteristics.find(x => x.type === Characteristic.CoolingThresholdTemperature).iid,
+              value: Math.round(command.execution[0].params.thermostatTemperatureSetpointHigh),
+            },
+            {
+              aid: service.aid,
+              iid: service.characteristics.find(x => x.type === Characteristic.HeatingThresholdTemperature).iid,
+              value: Math.round(command.execution[0].params.thermostatTemperatureSetpointLow),
+            }],
         };
       }
     }
