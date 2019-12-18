@@ -1,8 +1,9 @@
 
 import { Characteristic } from '../hap-types';
+import { HapService } from '../interfaces';
 
 export class Window {
-  sync(service) {
+  sync(service: HapService) {
     return {
       id: service.uniqueId,
       type: 'action.devices.types.WINDOW',
@@ -35,7 +36,7 @@ export class Window {
     };
   }
 
-  query(service) {
+  query(service: HapService) {
     return {
       on: true,
       online: true,
@@ -43,7 +44,7 @@ export class Window {
     };
   }
 
-  execute(service, command) {
+  execute(service: HapService, command) {
     if (!command.execution.length) {
       return { characteristics: [] };
     }

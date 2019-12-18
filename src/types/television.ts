@@ -1,7 +1,8 @@
 import { Characteristic } from '../hap-types';
+import { HapService } from '../interfaces';
 
 export class Television {
-  sync(service) {
+  sync(service: HapService) {
     return {
       id: service.uniqueId,
       type: 'action.devices.types.TV',
@@ -31,14 +32,14 @@ export class Television {
     };
   }
 
-  query(service) {
+  query(service: HapService) {
     return {
       on: service.characteristics.find(x => x.type === Characteristic.Active).value ? true : false,
       online: true,
     };
   }
 
-  execute(service, command) {
+  execute(service: HapService, command) {
     if (!command.execution.length) {
       return { characteristics: [] };
     }

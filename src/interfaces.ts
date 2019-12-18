@@ -6,6 +6,7 @@ export interface PluginConfig {
   twoFactorAuthPin: number;
   instanceBlacklist?: Array<string>;
   accessoryFilter?: Array<string>;
+  forceFahrenheit?: boolean;
 }
 
 export interface Instance {
@@ -23,10 +24,27 @@ export interface Instance {
   }[];
 }
 
+export interface HapCharacteristic {
+  iid: number;
+  type: string;
+  perms: Array<'pr' | 'pw' | 'ev' | 'aa' | 'tw' | 'hd' | 'wr'>;
+  format: 'bool' | 'int' | 'float' | 'string' | 'uint8' | 'uin16' | 'uin32' | 'uint64' | 'data' | 'tlv8' | 'array' | 'dict';
+  value: any;
+  description?: string;
+  unit?: 'celsius' | 'percentage' | 'arcdegrees' | 'lux' | 'seconds';
+  maxValue?: number;
+  minValue?: number;
+  minStep?: number;
+  maxLen?: number;
+  maxDataLen?: number;
+  validValues?: number[];
+  validValueRanges?: [number, number];
+}
+
 export interface HapService {
   iid: number;
   type: string;
-  characteristics: any[];
+  characteristics: HapCharacteristic[];
   primary: boolean;
   hidden: boolean;
 

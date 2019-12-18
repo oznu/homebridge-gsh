@@ -49,6 +49,10 @@
           "title": "Accessory Name",
           "type": "string"
         }
+      },
+      "forceFahrenheit": {
+        "title": "Force Degrees Fahrenheit",
+        "type": "boolean"
       }
     }
   },
@@ -121,7 +125,12 @@
               ]
             }
           ]
-        }
+        },
+        {
+          "type": "help",
+          "helpvalue": "<h5>Force Fahrenheit</h5><em class='primary-text'>Some Homebridge thermostat plugins do not correctly report they are using Fahrenheit temperature units. Enabling this option will force all thermostats accessories to display temperature units in Fahrenheit.</em>"
+        },
+        "forceFahrenheit"
       ]
     }
   ]

@@ -40,7 +40,7 @@ export class Hap {
     Outlet: new Switch('action.devices.types.OUTLET'),
     Switch: new Switch('action.devices.types.SWITCH'),
     Television: new Television(),
-    Thermostat: new Thermostat(),
+    Thermostat: new Thermostat(this),
     Window: new Window(),
     WindowCovering: new WindowCovering(),
   };

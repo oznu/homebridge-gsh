@@ -1,4 +1,5 @@
 import { Characteristic } from '../hap-types';
+import { HapService } from '../interfaces';
 
 export class Switch {
   private deviceType: string;
@@ -7,7 +8,7 @@ export class Switch {
     this.deviceType = type;
   }
 
-  sync(service) {
+  sync(service: HapService) {
     return {
       id: service.uniqueId,
       type: this.deviceType,
@@ -37,14 +38,14 @@ export class Switch {
     };
   }
 
-  query(service) {
+  query(service: HapService) {
     return {
       on: service.characteristics.find(x => x.type === Characteristic.On).value,
       online: true,
     };
   }
 
-  execute(service, command) {
+  execute(service: HapService, command) {
     if (!command.execution.length) {
       return { characteristics: [] };
     }

@@ -1,7 +1,8 @@
 import { Characteristic } from '../hap-types';
+import { HapService } from '../interfaces';
 
 export class GarageDoorOpener {
-  sync(service) {
+  sync(service: HapService) {
     return {
       id: service.uniqueId,
       type: 'action.devices.types.GARAGE',
@@ -34,7 +35,7 @@ export class GarageDoorOpener {
     };
   }
 
-  query(service) {
+  query(service: HapService) {
     /**
      * GSH impliments garrage door as an open percentage, while HomeKit impliments it as open/closed/opening/closing
      * To work around this we just set the values to something that works.
@@ -50,7 +51,7 @@ export class GarageDoorOpener {
     } as any;
   }
 
-  execute(service, command) {
+  execute(service: HapService, command) {
     if (!command.execution.length) {
       return { characteristics: [] };
     }

@@ -1,7 +1,8 @@
 import { Characteristic } from '../hap-types';
+import { HapService } from '../interfaces';
 
 export class Fanv2 {
-  sync(service) {
+  sync(service: HapService) {
 
     return {
       id: service.uniqueId,
@@ -32,14 +33,14 @@ export class Fanv2 {
     };
   }
 
-  query(service) {
+  query(service: HapService) {
     return {
       on: service.characteristics.find(x => x.type === Characteristic.Active).value ? true : false,
       online: true,
     };
   }
 
-  execute(service, command) {
+  execute(service: HapService, command) {
     if (!command.execution.length) {
       return { characteristics: [] };
     }

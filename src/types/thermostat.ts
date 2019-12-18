@@ -1,7 +1,15 @@
 import { Characteristic } from '../hap-types';
+import { HapService } from '../interfaces';
+import { Hap } from '../hap';
 
 export class Thermostat {
-  sync(service) {
+  hap: Hap;
+
+  constructor(hap: Hap) {
+    this.hap = hap;
+  }
+
+  sync(service: HapService) {
     const availableThermostatModes = ['off', 'heat', 'cool'];
 
     if (service.characteristics.find(x => x.type === Characteristic.CoolingThresholdTemperature) &&
@@ -11,9 +19,6 @@ export class Thermostat {
       availableThermostatModes.push('auto');
     }
 
-    console.log('GSH - THERMOSTAT DISPLAY UNITS:',
-      JSON.stringify(service.characteristics.find(x => x.type === Characteristic.TemperatureDisplayUnits)));
-
     return {
       id: service.uniqueId,
       type: 'action.devices.types.THERMOSTAT',
@@ -22,7 +27,8 @@ export class Thermostat {
       ],
       attributes: {
         availableThermostatModes: availableThermostatModes.join(','),
-        thermostatTemperatureUnit: service.characteristics.find(x => x.type === Characteristic.TemperatureDisplayUnits).value ? 'F' : 'C',
+        thermostatTemperatureUnit: this.hap.config.forceFahrenheit ? 'F'
+          : service.characteristics.find(x => x.type === Characteristic.TemperatureDisplayUnits).value ? 'F' : 'C',
       },
       name: {
         defaultNames: [
@@ -47,7 +53,7 @@ export class Thermostat {
     };
   }
 
-  query(service) {
+  query(service: HapService) {
     const targetHeatingCoolingState = service.characteristics.find(x => x.type === Characteristic.TargetHeatingCoolingState).value;
     const thermostatMode = ['off', 'heat', 'cool', 'auto'][targetHeatingCoolingState];
 
@@ -79,7 +85,7 @@ export class Thermostat {
     return response;
   }
 
-  execute(service, command) {
+  execute(service: HapService, command) {
     if (!command.execution.length) {
       return { characteristics: [] };
     }
@@ -107,7 +113,7 @@ export class Thermostat {
           characteristics: [{
             aid: service.aid,
             iid: service.characteristics.find(x => x.type === Characteristic.TargetTemperature).iid,
-            value: Math.round(command.execution[0].params.thermostatTemperatureSetpoint),
+            value: command.execution[0].params.thermostatTemperatureSetpoint,
           }],
         };
       }
@@ -117,12 +123,12 @@ export class Thermostat {
             {
               aid: service.aid,
               iid: service.characteristics.find(x => x.type === Characteristic.CoolingThresholdTemperature).iid,
-              value: Math.round(command.execution[0].params.thermostatTemperatureSetpointHigh),
+              value: command.execution[0].params.thermostatTemperatureSetpointHigh,
             },
             {
               aid: service.aid,
               iid: service.characteristics.find(x => x.type === Characteristic.HeatingThresholdTemperature).iid,
-              value: Math.round(command.execution[0].params.thermostatTemperatureSetpointLow),
+              value: command.execution[0].params.thermostatTemperatureSetpointLow,
             }],
         };
       }

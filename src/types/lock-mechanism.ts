@@ -1,9 +1,10 @@
 import { Characteristic } from '../hap-types';
+import { HapService } from '../interfaces';
 
 export class LockMechanism {
   public twoFactorRequired = true;
 
-  sync(service) {
+  sync(service: HapService) {
     return {
       id: service.uniqueId,
       type: 'action.devices.types.LOCK',
@@ -33,7 +34,7 @@ export class LockMechanism {
     };
   }
 
-  query(service) {
+  query(service: HapService) {
     const response = {
       online: true,
     } as any;
@@ -66,7 +67,7 @@ export class LockMechanism {
     return response;
   }
 
-  execute(service, command) {
+  execute(service: HapService, command) {
     if (!command.execution.length) {
       return { characteristics: [] };
     }

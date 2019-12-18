@@ -1,7 +1,8 @@
 import { Characteristic } from '../hap-types';
+import { HapService } from '../interfaces';
 
 export class Lightbulb {
-  sync(service) {
+  sync(service: HapService) {
 
     const attributes = {} as any;
     const traits = [
@@ -48,7 +49,7 @@ export class Lightbulb {
     };
   }
 
-  query(service) {
+  query(service: HapService) {
     const response = {
       on: service.characteristics.find(x => x.type === Characteristic.On).value,
       online: true,
@@ -73,7 +74,7 @@ export class Lightbulb {
     return response;
   }
 
-  execute(service, command) {
+  execute(service: HapService, command) {
     if (!command.execution.length) {
       return { characteristics: [] };
     }
