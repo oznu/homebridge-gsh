@@ -5,6 +5,7 @@ server
 portal
 src
 scripts
+local-execution
 tsconfig.build.json
 tsconfig.json
 tslint.json
