@@ -417,12 +417,12 @@ export class Hap {
    * @param pendingStateReport
    */
   async processPendingStateReports(pendingStateReport) {
-    const states = { '0193977b68e5ab6562ea796ce2c41cfa6995fe813fdc7fc2b6246086cf410167': { on: true, online: true, openPercent: 0 }, '2f0575f5447fb7c5b006328067278d015a86761cecf9087f1754c470cee976ee': { on: true, online: true, openPercent: 0 }, '4c633162e1798bb5ed5ab898c568b382c41d9f8d2fb372e1b2c47aa49fc53ffb': { on: true, online: true, openPercent: 0 }, 'ba27f4de86b20782c7fec74553ee751ada94c05d28992d746983f0b976250680': { on: true, online: true, openPercent: 0 } };
+    const states = {};
 
-    // for (const uniqueId of pendingStateReport) {
-    //   const service = this.services.find(x => x.uniqueId === uniqueId);
-    //   states[service.uniqueId] = this.types[service.serviceType].query(service);
-    // }
+    for (const uniqueId of pendingStateReport) {
+      const service = this.services.find(x => x.uniqueId === uniqueId);
+      states[service.uniqueId] = this.types[service.serviceType].query(service);
+    }
 
     return await this.sendStateReport(states);
   }
