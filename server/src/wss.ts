@@ -1,6 +1,6 @@
 import * as url from 'url';
 import * as querystring from 'querystring';
-import * as EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import * as crypto from 'crypto';
 import { Redis } from 'ioredis';
 import { Server } from 'ws';
