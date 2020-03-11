@@ -1,5 +1,5 @@
 import { Characteristic } from '../hap-types';
-import { HapService } from '../interfaces';
+import { HapService, AccessoryTypeExecuteResponse } from '../interfaces';
 
 export class Television {
   sync(service: HapService) {
@@ -39,20 +39,21 @@ export class Television {
     };
   }
 
-  execute(service: HapService, command) {
+  execute(service: HapService, command): AccessoryTypeExecuteResponse {
     if (!command.execution.length) {
-      return { characteristics: [] };
+      return { payload: { characteristics: [] } };
     }
 
     switch (command.execution[0].command) {
       case ('action.devices.commands.OnOff'): {
-        return {
+        const payload = {
           characteristics: [{
             aid: service.aid,
             iid: service.characteristics.find(x => x.type === Characteristic.Active).iid,
             value: command.execution[0].params.on ? 1 : 0,
           }],
         };
+        return { payload };
       }
     }
   }

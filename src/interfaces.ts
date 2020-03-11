@@ -89,3 +89,10 @@ export interface HapInstance {
     accessories: HapAccessory[];
   };
 }
+
+export interface AccessoryTypeExecuteResponse {
+  payload: {
+    characteristics: { aid: number, iid: number, value: any }[]
+  };
+  states?: undefined | object;
+}

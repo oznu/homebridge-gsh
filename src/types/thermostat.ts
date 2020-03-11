@@ -1,5 +1,5 @@
 import { Characteristic } from '../hap-types';
-import { HapService } from '../interfaces';
+import { HapService, AccessoryTypeExecuteResponse } from '../interfaces';
 import { Hap } from '../hap';
 
 export class Thermostat {
@@ -85,9 +85,9 @@ export class Thermostat {
     return response;
   }
 
-  execute(service: HapService, command) {
+  execute(service: HapService, command): AccessoryTypeExecuteResponse {
     if (!command.execution.length) {
-      return { characteristics: [] };
+      return { payload: { characteristics: [] } };
     }
 
     switch (command.execution[0].command) {
@@ -99,26 +99,27 @@ export class Thermostat {
           auto: 3,
           heatcool: 3,
         };
-
-        return {
+        const payload = {
           characteristics: [{
             aid: service.aid,
             iid: service.characteristics.find(x => x.type === Characteristic.TargetHeatingCoolingState).iid,
             value: mode[command.execution[0].params.thermostatMode],
           }],
         };
+        return { payload };
       }
       case ('action.devices.commands.ThermostatTemperatureSetpoint'): {
-        return {
+        const payload = {
           characteristics: [{
             aid: service.aid,
             iid: service.characteristics.find(x => x.type === Characteristic.TargetTemperature).iid,
             value: command.execution[0].params.thermostatTemperatureSetpoint,
           }],
         };
+        return { payload };
       }
       case ('action.devices.commands.ThermostatTemperatureSetRange'): {
-        return {
+        const payload = {
           characteristics: [
             {
               aid: service.aid,
@@ -131,6 +132,7 @@ export class Thermostat {
               value: command.execution[0].params.thermostatTemperatureSetpointLow,
             }],
         };
+        return { payload };
       }
     }
   }

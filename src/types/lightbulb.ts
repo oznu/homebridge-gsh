@@ -1,5 +1,5 @@
 import { Characteristic } from '../hap-types';
-import { HapService } from '../interfaces';
+import { HapService, AccessoryTypeExecuteResponse } from '../interfaces';
 
 export class Lightbulb {
   sync(service: HapService) {
@@ -74,23 +74,24 @@ export class Lightbulb {
     return response;
   }
 
-  execute(service: HapService, command) {
+  execute(service: HapService, command): AccessoryTypeExecuteResponse {
     if (!command.execution.length) {
-      return { characteristics: [] };
+      return { payload: { characteristics: [] } };
     }
 
     switch (command.execution[0].command) {
       case ('action.devices.commands.OnOff'): {
-        return {
+        const payload = {
           characteristics: [{
             aid: service.aid,
             iid: service.characteristics.find(x => x.type === Characteristic.On).iid,
             value: command.execution[0].params.on,
           }],
         };
+        return { payload };
       }
       case ('action.devices.commands.BrightnessAbsolute'): {
-        return {
+        const payload = {
           characteristics: [{
             aid: service.aid,
             iid: service.characteristics.find(x => x.type === Characteristic.Brightness).iid,
@@ -102,9 +103,10 @@ export class Lightbulb {
             value: command.execution[0].params.brightness ? true : false,
           }],
         };
+        return { payload };
       }
       case ('action.devices.commands.ColorAbsolute'): {
-        return {
+        const payload = {
           characteristics: [{
             aid: service.aid,
             iid: service.characteristics.find(x => x.type === Characteristic.Hue).iid,
@@ -115,6 +117,7 @@ export class Lightbulb {
             value: command.execution[0].params.color.spectrumHSV.saturation * 100,
           }],
         };
+        return { payload };
       }
     }
   }

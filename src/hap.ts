@@ -13,6 +13,7 @@ import { Fanv2 } from './types/fan-v2';
 import { GarageDoorOpener } from './types/garage-door-opener';
 import { Lightbulb } from './types/lightbulb';
 import { LockMechanism } from './types/lock-mechanism';
+import { SecuritySystem } from './types/security-system';
 import { Switch } from './types/switch';
 import { Television } from './types/television';
 import { Thermostat } from './types/thermostat';
@@ -38,6 +39,7 @@ export class Hap {
     Lightbulb: new Lightbulb(),
     LockMechanism: new LockMechanism(),
     Outlet: new Switch('action.devices.types.OUTLET'),
+    SecuritySystem: new SecuritySystem(),
     Switch: new Switch('action.devices.types.SWITCH'),
     Television: new Television(),
     Thermostat: new Thermostat(this),
@@ -70,6 +72,8 @@ export class Hap {
     Characteristic.CoolingThresholdTemperature,
     Characteristic.CurrentTemperature,
     Characteristic.CurrentRelativeHumidity,
+    Characteristic.SecuritySystemTargetState,
+    Characteristic.SecuritySystemCurrentState,
   ];
 
   instanceBlacklist: Array<string> = [];
@@ -215,7 +219,7 @@ export class Hap {
             });
           } else {
             // process the request
-            const payload = this.types[service.serviceType].execute(service, command);
+            const { payload, states } = this.types[service.serviceType].execute(service, command);
 
             await new Promise((resolve, reject) => {
               this.homebridge.HAPcontrol(service.instance.ipAddress, service.instance.port, JSON.stringify(payload), (err) => {
@@ -223,6 +227,7 @@ export class Hap {
                   response.push({
                     ids: [device.id],
                     status: 'SUCCESS',
+                    states,
                   });
                 } else {
                   this.log.error('Failed to control an accessory. Make sure all your Homebridge instances are using the same PIN.');
@@ -344,9 +349,17 @@ export class Hap {
           }
 
           // perform user-defined service filters based on name
-          if (!this.accessoryFilter.includes(service.serviceName)) {
-            this.services.push(service);
+          if (this.accessoryFilter.includes(service.serviceName)) {
+            return;
           }
+
+          // if 2fa is forced for this service type, but a pin has not been set ignore the service
+          if (this.types[service.serviceType].twoFactorRequired && !this.config.twoFactorAuthPin) {
+            this.log.warn(`Not registering ${service.serviceName} - Two Factor Authentication Pin has not been set and is required for ${service.serviceType} accessory types.`);
+            return;
+          }
+
+          this.services.push(service);
         });
     });
   }

@@ -1,6 +1,6 @@
 
 import { Characteristic } from '../hap-types';
-import { HapService } from '../interfaces';
+import { HapService, AccessoryTypeExecuteResponse } from '../interfaces';
 
 export class Door {
   sync(service: HapService) {
@@ -44,20 +44,21 @@ export class Door {
     };
   }
 
-  execute(service: HapService, command) {
+  execute(service: HapService, command): AccessoryTypeExecuteResponse {
     if (!command.execution.length) {
-      return { characteristics: [] };
+      return { payload: { characteristics: [] } };
     }
 
     switch (command.execution[0].command) {
       case ('action.devices.commands.OpenClose'): {
-        return {
+        const payload = {
           characteristics: [{
             aid: service.aid,
             iid: service.characteristics.find(x => x.type === Characteristic.TargetPosition).iid,
             value: command.execution[0].params.openPercent,
           }],
         };
+        return { payload };
       }
     }
   }
