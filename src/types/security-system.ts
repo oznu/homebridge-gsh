@@ -140,6 +140,10 @@ export class SecuritySystem {
 
     switch (command.execution[0].command) {
       case ('action.devices.commands.ArmDisarm'): {
+        if (command.execution[0].params.arm === true) {
+          return false;
+        }
+
         return true;
       }
     }
