@@ -53,20 +53,20 @@
   "dependencies": {
     "@oznu/ws-connect": "^1.0.0",
     "fs-extra": "^8.1.0",
-    "rxjs": "^6.5.4"
+    "rxjs": "^6.5.5"
   },
   "devDependencies": {
     "@types/fs-extra": "^8.1.0",
-    "@types/node": "^13.9.3",
+    "@types/node": "^13.11.0",
     "@types/ws": "^7.2.3",
     "concurrently": "^5.1.0",
     "hap-node-client": "0.0.33",
-    "hap-nodejs": "^0.5.7",
+    "hap-nodejs": "^0.5.9",
     "nodemon": "^2.0.2",
     "request-promise": "^4.2.5",
     "rimraf": "^3.0.2",
     "ts-node": "^8.8.1",
-    "tslint": "^6.1.0",
+    "tslint": "^6.1.1",
     "typescript": "^3.8.3"
   }
 }
