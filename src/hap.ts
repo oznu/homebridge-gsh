@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 
 import { PluginConfig, HapInstance, HapService, Instance } from './interfaces';
+import { toLongFormUUID } from './uuid';
 import { Log } from './logger';
 
 import { Door } from './types/door';
@@ -299,6 +300,13 @@ export class Hap {
    */
   async parseAccessories(instance: HapInstance) {
     instance.accessories.accessories.forEach((accessory) => {
+      /** Ensure UUIDs are long form */
+      for (const service of accessory.services) {
+        service.type = toLongFormUUID(service.type);
+        for (const characteristic of service.characteristics) {
+          characteristic.type = toLongFormUUID(characteristic.type);
+        }
+      }
 
       // get accessory information service
       const accessoryInformationService = accessory.services.find(x => x.type === Service.AccessoryInformation);
