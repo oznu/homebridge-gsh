@@ -5,3 +5,4 @@ static
 homebridge-gsh-server-**.tgz
 .secret.json
 load-test.ts
+src/generate.ts
