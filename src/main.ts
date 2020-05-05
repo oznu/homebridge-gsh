@@ -1,5 +1,8 @@
 import * as crypto from 'crypto';
 import * as WebSocket from '@oznu/ws-connect';
+import * as querystring from 'querystring';
+import * as fs from 'fs-extra';
+import * as path from 'path';
 
 import { PluginConfig } from './interfaces';
 import { Log } from './logger';
@@ -11,18 +14,23 @@ export class Plugin {
   public homebridgeConfig;
   public hap: Hap;
 
+  public package = fs.readJsonSync(path.resolve(__dirname, '../package.json'));
+
   constructor(log, config: PluginConfig, homebridgeConfig) {
     this.log = new Log(log, config.debug);
     this.config = config;
     this.homebridgeConfig = homebridgeConfig;
 
-    // generate unique id for service based on the username, sha256 for privacy
-    const deviceId = crypto.createHash('sha256')
-      .update(this.homebridgeConfig.bridge.username)
-      .digest('hex');
+    const qs = {
+      // generate unique id for service based on the username, sha256 for privacy
+      deviceId: crypto.createHash('sha256').update(this.homebridgeConfig.bridge.username).digest('hex'),
+      token: config.token,
+      v: this.package.version,
+      n: this.package.name,
+    };
 
     // establish new websocket connection
-    const socket = new WebSocket(`wss://homebridge-gsh.iot.oz.nu/socket?token=${config.token}&deviceId=${deviceId}`);
+    const socket = new WebSocket(`wss://homebridge-gsh.iot.oz.nu/socket?${querystring.stringify(qs)}`);
 
     this.hap = new Hap(socket, this.log, this.homebridgeConfig.bridge.pin, this.config);
 

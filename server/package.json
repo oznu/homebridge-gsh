@@ -36,6 +36,7 @@
     "path": "^0.12.7",
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
+    "semver": "^7.3.2",
     "source-map-support": "^0.5.16",
     "uuid": "^7.0.3",
     "ws": "^7.2.3"
@@ -43,6 +44,7 @@
   "devDependencies": {
     "@types/ioredis": "^4.14.9",
     "@types/node": "^13.11.0",
+    "@types/semver": "^7.1.0",
     "nodemon": "^2.0.2",
     "rimraf": "^3.0.2",
     "ts-node": "^8.8.1",

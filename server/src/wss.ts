@@ -6,6 +6,7 @@ import { Redis } from 'ioredis';
 import { Server } from 'ws';
 import * as WebSocket from 'ws';
 import * as jwt from 'jsonwebtoken';
+import * as semver from 'semver';
 
 import { core } from './index';
 
@@ -72,6 +73,7 @@ export default class Wss extends EventEmitter {
 
       req.$clientId = decoded.id;
       req.$deviceId = qs.deviceId;
+      req.$clientVersion = qs.v;
 
       return callback(true);
     });
@@ -87,7 +89,13 @@ export default class Wss extends EventEmitter {
     const deviceId = req.$deviceId;
 
     const remoteIp = req.headers['x-real-ip'] || req.connection.remoteAddress;
-    console.log('Client Connected:', remoteIp, clientId, deviceId);
+    console.log('Client Connected:', remoteIp, clientId, deviceId, req.$clientVersion || '?.?.?');
+
+    if (!req.$clientVersion || semver.lt(req.$clientVersion, process.env.MIN_CLIENT_VERSION, { includePrerelease: true })) {
+      ws.send(JSON.stringify({
+        serverMessage: 'To continue using Google Home, please update the homebridge-gsh plugin ASAP.',
+      }));
+    }
 
     const clientListenerName = this.getClientListener(clientId);
 

@@ -406,7 +406,9 @@ export class Hap {
           characteristics: instance.evCharacteristics.filter(x => !x.registered),
         }), (err, response) => {
           if (err) {
-            this.log.error(err);
+            this.log.error(err.message);
+            this.instanceBlacklist.push(instance.username);
+            this.evInstances.splice(this.evInstances.indexOf(instance), 1);
           } else {
             instance.evCharacteristics.forEach((c) => {
               c.registered = true;
