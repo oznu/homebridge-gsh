@@ -274,6 +274,20 @@ export class Hap {
   }
 
   /**
+   * Check that it's possible to connect to the instance
+   */
+  private async checkInstanceConnection(instance: HapInstance): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.homebridge.HAPcontrol(instance.ipAddress, instance.instance.port, JSON.stringify({ characteristics: [{ aid: -1, iid: -1 }] }), (err) => {
+        if (err) {
+          return resolve(false);
+        }
+        return resolve(true);
+      });
+    });
+  }
+
+  /**
    * Load accessories from Homebridge
    */
   async getAccessories() {
@@ -282,6 +296,10 @@ export class Hap {
         this.services = [];
 
         for (const instance of instances) {
+          if (!await this.checkInstanceConnection(instance)) {
+            this.instanceBlacklist.push(instance.instance.txt.id);
+          }
+
           if (!this.instanceBlacklist.find(x => x.toLowerCase() === instance.instance.txt.id.toLowerCase())) {
             await this.parseAccessories(instance);
           } else {

@@ -185,6 +185,9 @@ export default class Gsh {
   async requestSync(clientId: string) {
     if (await this.cacheGet('not-linked', clientId)) {
       console.log(`Ignoring Sync Request from ${clientId} as they are not linked`);
+      core.wss.sendToClient(clientId, {
+        serverMessage: 'Please connect with the Google Home app: https://git.io/JfuHC'
+      });
       return;
     }
 

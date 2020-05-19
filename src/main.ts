@@ -89,7 +89,12 @@ export class Plugin {
     this.log.info('Received SYNC intent');
     this.log.debug(JSON.stringify(body, null, 2));
 
-    const devices = await this.hap.buildSyncResponse() as undefined;
+    const devices = await this.hap.buildSyncResponse() as any[];
+
+    if (!devices.length) {
+      this.log.warn('No supported devices found. See https://git.io/JfuHW');
+      return this.deviceNotReady(body);
+    }
 
     this.log.debug(devices);
 
