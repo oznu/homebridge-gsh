@@ -4,5 +4,6 @@
   ],
   "ext": "ts",
   "ignore": [],
-  "exec": "ts-node ./src/dev.ts"
+  "exec": "tsc && homebridge -I -D",
+  "signal": "SIGTERM"
 }

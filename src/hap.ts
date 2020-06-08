@@ -20,6 +20,7 @@ import { Television } from './types/television';
 import { Thermostat } from './types/thermostat';
 import { Window } from './types/window';
 import { WindowCovering } from './types/window-covering';
+import { HeaterCooler } from './types/heater-cooler';
 
 export class Hap {
   socket;
@@ -37,6 +38,7 @@ export class Hap {
     Fan: new Fan(),
     Fanv2: new Fanv2(),
     GarageDoorOpener: new GarageDoorOpener(),
+    HeaterCooler: new HeaterCooler(this),
     Lightbulb: new Lightbulb(),
     LockMechanism: new LockMechanism(),
     Outlet: new Switch('action.devices.types.OUTLET'),
