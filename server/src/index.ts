@@ -12,12 +12,20 @@ import gsh from './gsh';
 // Load environment variables from .env
 dotenv.config();
 
+const redisConfig: Redis.RedisOptions = {
+  port: process.env.GSH_REDIS_PORT ? parseInt(process.env.GSH_REDIS_PORT, 10) : 6379,
+  host: process.env.GSH_REDIS_HOST || '127.0.0.1',
+  family: process.env.GSH_REDIS_FAMILY ? parseInt(process.env.GSH_REDIS_FAMILY, 10) : 4,
+  password: process.env.GSH_REDIS_PASSWORD,
+  db: process.env.GSH_REDIS_DB ? parseInt(process.env.GSH_REDIS_DB, 10) : 0,
+};
+
 class Core {
   private server;
   public wss: wss;
   public gsh: gsh;
-  public pub = new Redis();
-  public sub = new Redis();
+  public pub = new Redis(redisConfig);
+  public sub = new Redis(redisConfig);
 
   constructor(port: number) {
     this.gsh = new gsh();
