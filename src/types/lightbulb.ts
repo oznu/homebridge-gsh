@@ -21,6 +21,15 @@ export class Lightbulb {
       attributes.colorTemp;
     }
 
+    if (service.characteristics.find(x => x.type === Characteristic.ColorTemperature)) {
+      traits.push('action.devices.traits.ColorSetting');
+      attributes.colorTemperatureRange = {
+        temperatureMinK: 2000,
+        temperatureMaxK: 6000
+      }
+      attributes.commandOnlyColorSetting = false
+    }
+
     return {
       id: service.uniqueId,
       type: 'action.devices.types.LIGHT',
@@ -71,6 +80,16 @@ export class Lightbulb {
       };
     }
 
+    // check if the bulb has cct
+    if (service.characteristics.find(x => x.type === Characteristic.ColorTemperature)) {
+      const min = service.characteristics.find(x => x.type === Characteristic.ColorTemperature).minValue;
+      const max = service.characteristics.find(x => x.type === Characteristic.ColorTemperature).maxValue;
+      const value = (max - min) - (service.characteristics.find(x => x.type === Characteristic.ColorTemperature).value - min) + min;
+      response.color = {
+        temperatureK: 2000 + (6000 - 2000) * ((value - min) / (max - min)),
+      };
+    }
+
     return response;
   }
 
@@ -106,17 +125,32 @@ export class Lightbulb {
         return { payload };
       }
       case ('action.devices.commands.ColorAbsolute'): {
-        const payload = {
-          characteristics: [{
+
+        const payload = { characteristics: [] };
+
+        if (command.execution[0].params.color.spectrumHSV) {
+          payload.characteristics.push({
             aid: service.aid,
             iid: service.characteristics.find(x => x.type === Characteristic.Hue).iid,
             value: command.execution[0].params.color.spectrumHSV.hue,
           }, {
             aid: service.aid,
             iid: service.characteristics.find(x => x.type === Characteristic.Saturation).iid,
-            value: command.execution[0].params.color.spectrumHSV.saturation * 100,
-          }],
-        };
+            value: command.execution[0].params.color.spectrumHSV.saturation,
+          })
+        }
+
+        if (command.execution[0].params.color.temperature) {
+          const min = service.characteristics.find(x => x.type === Characteristic.ColorTemperature).minValue;
+          const max = service.characteristics.find(x => x.type === Characteristic.ColorTemperature).maxValue;
+          const value = command.execution[0].params.color.temperature;
+          const hbAccessoryValue = min + (max - min) * ((value - 2000) / (6000 - 2000));
+          payload.characteristics.push({
+            aid: service.aid,
+            iid: service.characteristics.find(x => x.type === Characteristic.ColorTemperature).iid,
+            value: (max - min) - (hbAccessoryValue - min) + min,
+          });
+        }
         return { payload };
       }
     }
