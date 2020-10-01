@@ -26,8 +26,8 @@ export class Lightbulb {
       attributes.colorTemperatureRange = {
         temperatureMinK: 2000,
         temperatureMaxK: 6000
-      }
-      attributes.commandOnlyColorSetting = false
+      };
+      attributes.commandOnlyColorSetting = false;
     }
 
     return {
@@ -137,7 +137,7 @@ export class Lightbulb {
             aid: service.aid,
             iid: service.characteristics.find(x => x.type === Characteristic.Saturation).iid,
             value: command.execution[0].params.color.spectrumHSV.saturation * 100,
-          })
+          });
         }
 
         if (command.execution[0].params.color.temperature) {
