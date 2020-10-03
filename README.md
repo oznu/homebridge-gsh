@@ -34,7 +34,7 @@ Control your supported [Homebridge](https://github.com/nfarina/homebridge) acces
 * Window
 * Window Coverings
 * Door
-* Garage Door
+* Garage Door (2FA required)
 * Thermostat
 * Television (On / Off)
 * Lock Mechanism (2FA required)

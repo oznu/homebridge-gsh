@@ -383,7 +383,7 @@ export class Hap {
 
           // if 2fa is forced for this service type, but a pin has not been set ignore the service
           if (this.types[service.serviceType].twoFactorRequired && !this.config.twoFactorAuthPin) {
-            this.log.warn(`Not registering ${service.serviceName} - Two Factor Authentication Pin has not been set and is required for ${service.serviceType} accessory types.`);
+            this.log.warn(`Not registering ${service.serviceName} - Two Factor Authentication Pin has not been set and is required for ${service.serviceType} accessory types. See https://git.io/JUQWX`);
             return;
           }
 

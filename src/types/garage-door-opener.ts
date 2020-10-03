@@ -1,8 +1,11 @@
+import type { SmartHomeV1ExecuteRequestCommands, SmartHomeV1SyncDevices } from 'actions-on-google';
 import { Characteristic } from '../hap-types';
 import { HapService, AccessoryTypeExecuteResponse } from '../interfaces';
 
 export class GarageDoorOpener {
-  sync(service: HapService) {
+  public twoFactorRequired = true;
+
+  sync(service: HapService): SmartHomeV1SyncDevices {
     return {
       id: service.uniqueId,
       type: 'action.devices.types.GARAGE',
@@ -24,6 +27,8 @@ export class GarageDoorOpener {
       deviceInfo: {
         manufacturer: service.accessoryInformation.Manufacturer,
         model: service.accessoryInformation.Model,
+        hwVersion: service.accessoryInformation.HardwareRevision,
+        swVersion: service.accessoryInformation.SoftwareRevision,
       },
       customData: {
         aid: service.aid,
@@ -51,7 +56,7 @@ export class GarageDoorOpener {
     } as any;
   }
 
-  execute(service: HapService, command): AccessoryTypeExecuteResponse {
+  execute(service: HapService, command: SmartHomeV1ExecuteRequestCommands): AccessoryTypeExecuteResponse {
     if (!command.execution.length) {
       return { payload: { characteristics: [] } };
     }
@@ -68,6 +73,22 @@ export class GarageDoorOpener {
         return { payload };
       }
     }
+  }
+
+  is2faRequired(command: SmartHomeV1ExecuteRequestCommands): boolean {
+    if (!command.execution.length) {
+      return false;
+    }
+
+    switch (command.execution[0].command) {
+      case ('action.devices.commands.OpenClose'): {
+        if (command.execution[0].params.openPercent > 0) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
 }
