@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import * as WebSocket from '@oznu/ws-connect';
+import { WebSocket } from '@oznu/ws-connect';
 import * as querystring from 'querystring';
 import * as fs from 'fs-extra';
 import * as path from 'path';
