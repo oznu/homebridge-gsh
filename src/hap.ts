@@ -449,9 +449,11 @@ export class Hap {
       const accessories = this.services.filter(s =>
         s.instance.ipAddress === event.host && s.instance.port === event.port && s.aid === event.aid);
       const service = accessories.find(x => x.characteristics.find(c => c.iid === event.iid));
-      const characteristic = service.characteristics.find(c => c.iid === event.iid);
-      characteristic.value = event.value;
-      this.reportStateSubject.next(service.uniqueId);
+      if (service) {
+        const characteristic = service.characteristics.find(c => c.iid === event.iid);
+        characteristic.value = event.value;
+        this.reportStateSubject.next(service.uniqueId);
+      }
     }
   }
 
