@@ -35,12 +35,14 @@ Control your supported [Homebridge](https://github.com/nfarina/homebridge) acces
 * Window Coverings
 * Door
 * Garage Door (2FA required)
-* Thermostat
+* Thermostat / Heater Cooler
 * Television (On / Off)
 * Lock Mechanism (2FA required)
 * Security System (2FA required)
+* Temperature Sensor
+* Humidity Sensor
 
-*Note: Google Smart Home does not currently support "sensor" devices such as Temperature Sensors, Motion Sensors, Occupancy Sensors etc.*
+*Note: Google Smart Home does not currently support all "sensor" devices such as Motion Sensors or Occupancy Sensors etc.*
 
 ## Installation Instructions
 

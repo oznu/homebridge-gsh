@@ -12,15 +12,17 @@ import { Door } from './types/door';
 import { Fan } from './types/fan';
 import { Fanv2 } from './types/fan-v2';
 import { GarageDoorOpener } from './types/garage-door-opener';
+import { HeaterCooler } from './types/heater-cooler';
+import { HumiditySensor } from './types/humidity-sensor';
 import { Lightbulb } from './types/lightbulb';
 import { LockMechanism } from './types/lock-mechanism';
 import { SecuritySystem } from './types/security-system';
 import { Switch } from './types/switch';
 import { Television } from './types/television';
+import { TemperatureSensor } from './types/temperature-sensor';
 import { Thermostat } from './types/thermostat';
 import { Window } from './types/window';
 import { WindowCovering } from './types/window-covering';
-import { HeaterCooler } from './types/heater-cooler';
 
 export class Hap {
   socket;
@@ -39,12 +41,14 @@ export class Hap {
     Fanv2: new Fanv2(),
     GarageDoorOpener: new GarageDoorOpener(),
     HeaterCooler: new HeaterCooler(this),
+    HumiditySensor: new HumiditySensor(),
     Lightbulb: new Lightbulb(),
     LockMechanism: new LockMechanism(),
     Outlet: new Switch('action.devices.types.OUTLET'),
     SecuritySystem: new SecuritySystem(),
     Switch: new Switch('action.devices.types.SWITCH'),
     Television: new Television(),
+    TemperatureSensor: new TemperatureSensor(this),
     Thermostat: new Thermostat(this),
     Window: new Window(),
     WindowCovering: new WindowCovering(),

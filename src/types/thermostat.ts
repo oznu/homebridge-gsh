@@ -3,11 +3,9 @@ import { HapService, AccessoryTypeExecuteResponse } from '../interfaces';
 import { Hap } from '../hap';
 
 export class Thermostat {
-  hap: Hap;
-
-  constructor(hap: Hap) {
-    this.hap = hap;
-  }
+  constructor(
+    private hap: Hap
+  ) { }
 
   sync(service: HapService) {
     const availableThermostatModes = ['off', 'heat', 'cool'];
