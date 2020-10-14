@@ -23,9 +23,9 @@ jobs:
         run: npm install
 
       - name: Lint the project
-        run: npm run lint
+        run: npm run lint:plugin
 
       - name: Build the project
-        run: npm run build
+        run: npm run build:plugin
         env:
           CI: true
