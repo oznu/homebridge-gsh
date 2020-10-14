@@ -4,7 +4,7 @@ import { Hap } from '../hap';
 
 export class HeaterCooler {
   constructor(
-    private hap: Hap
+    private hap: Hap,
   ) { }
 
   sync(service: HapService) {
@@ -100,7 +100,7 @@ export class HeaterCooler {
             characteristics: [{
               aid: service.aid,
               iid: service.characteristics.find(x => x.type === Characteristic.Active).iid,
-              value: 0
+              value: 0,
             }],
           };
         } else {
@@ -109,12 +109,12 @@ export class HeaterCooler {
               {
                 aid: service.aid,
                 iid: service.characteristics.find(x => x.type === Characteristic.Active).iid,
-                value: 1
+                value: 1,
               }, {
                 aid: service.aid,
                 iid: service.characteristics.find(x => x.type === Characteristic.TargetHeaterCoolerState).iid,
                 value: mode[command.execution[0].params.thermostatMode],
-              }
+              },
             ],
           };
         }
@@ -132,7 +132,7 @@ export class HeaterCooler {
               aid: service.aid,
               iid: service.characteristics.find(x => x.type === Characteristic.HeatingThresholdTemperature).iid,
               value: command.execution[0].params.thermostatTemperatureSetpoint,
-            }
+            },
           ],
         };
         return { payload };

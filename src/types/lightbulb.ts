@@ -25,7 +25,7 @@ export class Lightbulb {
       traits.push('action.devices.traits.ColorSetting');
       attributes.colorTemperatureRange = {
         temperatureMinK: 2000,
-        temperatureMaxK: 6000
+        temperatureMaxK: 6000,
       };
       attributes.commandOnlyColorSetting = false;
     }

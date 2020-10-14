@@ -1,0 +1,92 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "ignorePatterns": [
+    "dist",
+    "server",
+    "portal",
+    "local-execution"
+  ],
+  "rules": {
+    "quotes": [
+      "warn",
+      "single"
+    ],
+    "indent": [
+      "warn",
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ],
+    "semi": [
+      "off"
+    ],
+    "comma-dangle": [
+      "warn",
+      "always-multiline"
+    ],
+    "dot-notation": "off",
+    "eqeqeq": "warn",
+    "curly": [
+      "warn",
+      "all"
+    ],
+    "brace-style": [
+      "warn"
+    ],
+    "prefer-arrow-callback": [
+      "warn"
+    ],
+    "max-len": [
+      "warn",
+      160
+    ],
+    "no-console": [
+      "warn"
+    ], // use the provided Homebridge log method instead
+    "no-non-null-assertion": [
+      "off"
+    ],
+    "comma-spacing": [
+      "error"
+    ],
+    "no-multi-spaces": [
+      "warn",
+      {
+        "ignoreEOLComments": true
+      }
+    ],
+    "lines-between-class-members": [
+      "warn",
+      "always",
+      {
+        "exceptAfterSingleLine": true
+      }
+    ],
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "off",
+      {
+        "args": "none"
+      }
+    ],
+    "@typescript-eslint/semi": [
+      "warn"
+    ],
+    "@typescript-eslint/member-delimiter-style": [
+      "warn"
+    ]
+  }
+}

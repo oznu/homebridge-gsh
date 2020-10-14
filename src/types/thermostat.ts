@@ -4,7 +4,7 @@ import { Hap } from '../hap';
 
 export class Thermostat {
   constructor(
-    private hap: Hap
+    private hap: Hap,
   ) { }
 
   sync(service: HapService) {

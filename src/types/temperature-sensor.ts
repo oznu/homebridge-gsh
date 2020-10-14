@@ -5,7 +5,7 @@ import { Hap } from '../hap';
 
 export class TemperatureSensor {
   constructor(
-    private hap: Hap
+    private hap: Hap,
   ) { }
 
   sync(service: HapService): SmartHomeV1SyncDevices {
@@ -47,7 +47,8 @@ export class TemperatureSensor {
   query(service: HapService) {
     return {
       online: true,
-      temperatureAmbientCelsius: service.characteristics.find(x => x.type === Characteristic.CurrentTemperature)?.value
+      temperatureSetpointCelsius: service.characteristics.find(x => x.type === Characteristic.CurrentTemperature)?.value,
+      temperatureAmbientCelsius: service.characteristics.find(x => x.type === Characteristic.CurrentTemperature)?.value,
     } as any;
   }
 

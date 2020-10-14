@@ -41,6 +41,7 @@ class Log {
   log(level, msg) {
     const date = new Date();
     const output = `[${level}] [${date.toLocaleString()}] [${this.prefix}]`;
+    // eslint-disable-next-line no-console
     console.log(output, msg);
   }
 }

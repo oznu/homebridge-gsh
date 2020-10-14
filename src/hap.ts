@@ -4,7 +4,7 @@ import * as crypto from 'crypto';
 import { Subject } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 
-import { PluginConfig, HapInstance, HapService, Instance } from './interfaces';
+import { PluginConfig, HapInstance, HapService, HapCharacteristic, Instance } from './interfaces';
 import { toLongFormUUID } from './uuid';
 import { Log } from './logger';
 
@@ -103,7 +103,7 @@ export class Hap {
 
     this.reportStateSubject
       .pipe(
-        map((i: any) => {
+        map((i) => {
           if (!this.pendingStateReport.includes(i)) {
             this.pendingStateReport.push(i);
           }
@@ -129,7 +129,7 @@ export class Hap {
 
     this.homebridge.once('Ready', () => {
       this.ready = true;
-      this.log.info(`Finished instance discovery`);
+      this.log.info('Finished instance discovery');
 
       setTimeout(() => {
         this.requestSync();
@@ -271,7 +271,7 @@ export class Hap {
         }
         return resolve(status.characteristics);
       });
-    }) as Array<any>;
+    }) as Array<HapCharacteristic>;
 
     for (const c of characteristics) {
       const characteristic = service.characteristics.find(x => x.iid === c.iid);
@@ -284,7 +284,9 @@ export class Hap {
    */
   private async checkInstanceConnection(instance: HapInstance): Promise<boolean> {
     return new Promise((resolve) => {
-      this.homebridge.HAPcontrol(instance.ipAddress, instance.instance.port, JSON.stringify({ characteristics: [{ aid: -1, iid: -1 }] }), (err) => {
+      this.homebridge.HAPcontrol(instance.ipAddress, instance.instance.port, JSON.stringify(
+        { characteristics: [{ aid: -1, iid: -1 }] },
+      ), (err) => {
         if (err) {
           return resolve(false);
         }
@@ -348,7 +350,7 @@ export class Hap {
       accessory.services
         .filter(x => x.type !== Service.AccessoryInformation)
         .filter(x => ServicesTypes[x.type])
-        .filter(x => this.types.hasOwnProperty(ServicesTypes[x.type]))
+        .filter(x => Object.prototype.hasOwnProperty.call(this.types, ServicesTypes[x.type]))
         .forEach((service) => {
           service.accessoryInformation = accessoryInformation;
           service.aid = accessory.aid;
@@ -387,7 +389,8 @@ export class Hap {
 
           // if 2fa is forced for this service type, but a pin has not been set ignore the service
           if (this.types[service.serviceType].twoFactorRequired && !this.config.twoFactorAuthPin) {
-            this.log.warn(`Not registering ${service.serviceName} - Two Factor Authentication Pin has not been set and is required for ${service.serviceType} accessory types. See https://git.io/JUQWX`);
+            this.log.warn(`Not registering ${service.serviceName} - Two Factor Authentication Pin has not been set and is required for ` +
+              `${service.serviceType} accessory types. See https://git.io/JUQWX`);
             return;
           }
 

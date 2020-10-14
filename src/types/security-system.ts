@@ -28,33 +28,33 @@ export class SecuritySystem {
               level_name: 'HOME',
               level_values: [{
                 level_synonym: ['Home'],
-                lang: 'en'
+                lang: 'en',
               }, {
                 level_synonym: ['Anwesend'],
-                lang: 'de'
-              }]
+                lang: 'de',
+              }],
             }, {
               level_name: 'AWAY',
               level_values: [{
                 level_synonym: ['Away'],
-                lang: 'en'
+                lang: 'en',
               }, {
                 level_synonym: ['Abwesend'],
-                lang: 'de'
-              }]
+                lang: 'de',
+              }],
             }, {
               level_name: 'NIGHT',
               level_values: [{
                 level_synonym: ['Night'],
-                lang: 'en'
+                lang: 'en',
               }, {
                 level_synonym: ['Nacht'],
-                lang: 'de'
-              }]
-            }
+                lang: 'de',
+              }],
+            },
           ],
-          ordered: true
-        }
+          ordered: true,
+        },
       },
       deviceInfo: {
         manufacturer: service.accessoryInformation.Manufacturer,
@@ -76,7 +76,7 @@ export class SecuritySystem {
     const response = {
       on: true,
       online: true,
-      status: 'SUCCESS'
+      status: 'SUCCESS',
     } as any;
 
     const securitySystemCurrentState = service.characteristics.find(x => x.type === Characteristic.SecuritySystemCurrentState).value;
@@ -125,7 +125,7 @@ export class SecuritySystem {
 
         const states = {
           isArmed: command.execution[0].params.arm,
-          currentArmLevel: command.execution[0].params.armLevel
+          currentArmLevel: command.execution[0].params.armLevel,
         };
 
         return { payload, states };

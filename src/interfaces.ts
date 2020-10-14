@@ -1,4 +1,6 @@
-export interface PluginConfig {
+import { PlatformConfig } from 'homebridge';
+
+export interface PluginConfig extends PlatformConfig {
   platform: string;
   name: string;
   token: string;
@@ -83,7 +85,7 @@ export interface HapInstance {
       md: string;
       pv: string;
       id: string;
-    }
+    };
   };
   accessories: {
     accessories: HapAccessory[];
@@ -92,7 +94,7 @@ export interface HapInstance {
 
 export interface AccessoryTypeExecuteResponse {
   payload: {
-    characteristics: { aid: number, iid: number, value: any }[]
+    characteristics: { aid: number; iid: number; value: any }[];
   };
-  states?: undefined | object;
+  states?: undefined | Record<string, any>;
 }

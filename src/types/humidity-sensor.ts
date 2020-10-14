@@ -41,7 +41,7 @@ export class HumiditySensor {
   query(service: HapService) {
     return {
       online: true,
-      humidityAmbientPercent: service.characteristics.find(x => x.type === Characteristic.CurrentRelativeHumidity)?.value
+      humidityAmbientPercent: service.characteristics.find(x => x.type === Characteristic.CurrentRelativeHumidity)?.value,
     } as any;
   }
 
