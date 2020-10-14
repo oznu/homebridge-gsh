@@ -25,6 +25,7 @@
     "build:server": "npm run build --prefix server",
     "build:portal": "npm run build --prefix portal",
     "start:server": "npm run start --prefix server",
+    "lint": "npm run lint:plugin",
     "lint:plugin": "eslint --ext .ts --max-warnings=0 .",
     "prepublishOnly": "npm run build:plugin"
   },
