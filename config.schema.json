@@ -27,7 +27,8 @@
       },
       "twoFactorAuthPin": {
         "placeholder": "Two Factor Authentication Pin Code",
-        "type": "integer"
+        "type": "string"
+        "pattern": "^[0-9]*$"
       },
       "debug": {
         "title": "Enable Debug Logging",
