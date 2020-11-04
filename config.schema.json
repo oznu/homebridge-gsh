@@ -1,0 +1,138 @@
+{
+  "pluginAlias": "google-smarthome",
+  "pluginType": "platform",
+  "singular": true,
+  "headerDisplay": "## Homebridge Config UI X Upgrade Required\nhomebridge-config-ui-x v4.6.0 or later is required to configure this plugin correctly. If you are seeing this message you need to upgrade (or reload the UI).\n",
+  "footerDisplay": "Search for [Homebridge in the Google Home app](https://assistant.google.com/services/a/uid/000000b558f0d5d1?hl=en) and link the action to complete setup.",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string",
+        "default": "Google Smart Home",
+        "minLength": 1,
+        "required": true
+      },
+      "token": {
+        "title": "Token",
+        "type": "string",
+        "required": true
+      },
+      "notice": {
+        "title": "Notice",
+        "type": "string",
+        "required": true,
+        "default": "Keep your token a secret!"
+      },
+      "twoFactorAuthPin": {
+        "placeholder": "Two Factor Authentication Pin Code",
+        "type": "string",
+        "pattern": "^[0-9]*$"
+      },
+      "debug": {
+        "title": "Enable Debug Logging",
+        "type": "boolean"
+      },
+      "instanceBlacklist": {
+        "title": "Instance",
+        "type": "array",
+        "items": {
+          "title": "Instance Username",
+          "type": "string",
+          "pattern": "^([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2}$"
+        }
+      },
+      "accessoryFilter": {
+        "title": "Accessory",
+        "type": "array",
+        "items": {
+          "title": "Accessory Name",
+          "type": "string"
+        }
+      },
+      "forceFahrenheit": {
+        "title": "Force Degrees Fahrenheit",
+        "type": "boolean"
+      }
+    }
+  },
+  "layout": [
+    {
+      "type": "fieldset",
+      "title": "Advanced Settings",
+      "expandable": true,
+      "expanded": false,
+      "items": [
+        {
+          "type": "help",
+          "helpvalue": "<h5>Debug Mode</h5><em class='primary-text'>Enabling debug mode can help troubleshoot problems. If you are experiencing problems with this plugin you should enable debug logging and include the results in your support request.</em>"
+        },
+        "debug",
+        {
+          "type": "help",
+          "helpvalue": "<h5>Two Factor Authentication</h5><em class='primary-text'>If you provide a two factor authentication code, the Google Assistant will prompt you for your code before performing certain actions. e.g. unlocking a Lock Mechanism.</em>"
+        },
+        {
+          "notitle": true,
+          "key": "twoFactorAuthPin"
+        },
+        {
+          "type": "help",
+          "helpvalue": "<h5>Instance Blacklist</h5><em class='primary-text'>Enter the usernames of any Homebridge instances on your network that you don't want to be able to control from the Google Assistant.</em>"
+        },
+        {
+          "nodescription": true,
+          "notitle": true,
+          "key": "instanceBlacklist",
+          "type": "array",
+          "items": [
+            {
+              "type": "div",
+              "displayFlex": true,
+              "flex-direction": "row",
+              "items": [
+                {
+                  "key": "instanceBlacklist[]",
+                  "flex": "1 1 50px",
+                  "notitle": true,
+                  "placeholder": "Enter homebridge username..."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "help",
+          "helpvalue": "<h5>Accessory Filter</h5><em class='primary-text'>Enter the names (as displayed in the Google Home app) of the accessories you don't want to control from the Google Assistant.</em>"
+        },
+        {
+          "nodescription": true,
+          "notitle": true,
+          "key": "accessoryFilter",
+          "type": "array",
+          "items": [
+            {
+              "type": "div",
+              "displayFlex": true,
+              "flex-direction": "row",
+              "items": [
+                {
+                  "key": "accessoryFilter[]",
+                  "flex": "1 1 50px",
+                  "notitle": true,
+                  "placeholder": "Enter accessory name..."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "help",
+          "helpvalue": "<h5>Force Fahrenheit</h5><em class='primary-text'>Some Homebridge thermostat plugins do not correctly report they are using Fahrenheit temperature units. Enabling this option will force all thermostats accessories to display temperature units in Fahrenheit.</em>"
+        },
+        "forceFahrenheit"
+      ]
+    }
+  ]
+}

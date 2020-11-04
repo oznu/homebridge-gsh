@@ -1,0 +1,14 @@
+node_modules
+.vscode
+.github
+server
+portal
+src
+scripts
+local-execution
+tsconfig.build.json
+tsconfig.json
+tslint.json
+nodemon.json
+.env
+homebridge-gsh-**.tgz

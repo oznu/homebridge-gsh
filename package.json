@@ -1,0 +1,73 @@
+{
+  "name": "homebridge-gsh",
+  "displayName": "Homebridge Google Smart Home",
+  "version": "2.0.1",
+  "description": "Google Smart Home",
+  "license": "GPL-3.0",
+  "author": "oznu <dev@oz.nu>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/oznu/homebridge-gsh.git"
+  },
+  "bugs": {
+    "url": "https://github.com/oznu/homebridge-gsh/issues"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "watch": "nodemon",
+    "build": "tsc",
+    "lint": "eslint --ext .ts --max-warnings=0 .",
+    "prepublishOnly": "npm run build"
+  },
+  "engines": {
+    "node": ">=10.17.0",
+    "homebridge": ">=1.0.0"
+  },
+  "funding": [
+    {
+      "type": "paypal",
+      "url": "https://paypal.me/oznu"
+    }
+  ],
+  "keywords": [
+    "homebridge-plugin",
+    "google smart home",
+    "google-smart-home",
+    "google home",
+    "google-home",
+    "google assistant",
+    "google-assistant",
+    "google",
+    "android",
+    "homebridge",
+    "gsh"
+  ],
+  "bundledDependencies": [
+    "@oznu/ws-connect",
+    "fs-extra",
+    "hap-node-client",
+    "rxjs"
+  ],
+  "dependencies": {
+    "@oznu/ws-connect": "^2.2.0",
+    "fs-extra": "^9.0.1",
+    "rxjs": "^6.6.3"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^9.0.2",
+    "@types/node": "^14.11.8",
+    "@types/ws": "^7.2.7",
+    "@typescript-eslint/eslint-plugin": "^4.4.1",
+    "@typescript-eslint/parser": "^4.4.1",
+    "actions-on-google": "^2.13.0",
+    "eslint": "^7.11.0",
+    "hap-node-client": "^0.1.5",
+    "hap-nodejs": "^0.8.2",
+    "homebridge": "^1.2.3",
+    "nodemon": "^2.0.5",
+    "request-promise": "^4.2.6",
+    "rimraf": "^3.0.2",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.3"
+  }
+}
