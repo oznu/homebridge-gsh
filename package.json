@@ -1,4 +1,5 @@
 {
+  "private": false,
   "name": "homebridge-gsh",
   "displayName": "Homebridge Google Smart Home",
   "version": "2.0.1",
@@ -15,7 +16,10 @@
   "main": "dist/index.js",
   "scripts": {
     "watch": "nodemon",
-    "build": "tsc",
+    "watch:ui": "npm run start --prefix homebridge-ui/public",
+    "build": "rimraf dist && npm run build:plugin && npm run build:ui",
+    "build:plugin": "tsc",
+    "build:ui": "npm run build --prefix homebridge-ui/public",
     "lint": "eslint --ext .ts --max-warnings=0 .",
     "prepublishOnly": "npm run build"
   },

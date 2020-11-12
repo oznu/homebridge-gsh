@@ -11,9 +11,7 @@
   },
   "ignorePatterns": [
     "dist",
-    "server",
-    "portal",
-    "local-execution"
+    "homebridge-ui"
   ],
   "rules": {
     "quotes": [

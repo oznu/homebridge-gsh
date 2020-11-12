@@ -1,0 +1,82 @@
+<div *ngIf="translateService.ready && ready">
+  <div *ngIf="!env.enableAccessories">
+    <div class="alert alert-warning" role="alert">
+      <p [innerHTML]="'accessories.message_must_use_insecure_mode' | translate"></p>
+      <p class="mb-0">
+        <span>{{ 'accessories.message_please_see' | translate }}</span>
+        <a target="_blank" rel="noopener noreferrer"
+          href="https://github.com/oznu/homebridge-config-ui-x/wiki/Enabling-Accessory-Control">
+          https://github.com/oznu/homebridge-config-ui-x/wiki/Enabling-Accessory-Control
+        </a>
+        <span>{{ 'accessories.message_for_more_information' | translate }}</span>
+      </p>
+    </div>
+  </div>
+
+  <div *ngIf="env.enableAccessories">
+    <p [innerHTML]="'plugins.settings.custom.homebridge-gsh.message_about' | translate"></p>
+    <p *ngIf="!pluginConfig.token" translate="plugins.settings.custom.homebridge-gsh.message_account_link_required"></p>
+    <div class="text-center" *ngIf="!pluginConfig.token">
+      <button class="btn btn-primary btn-lg" (click)="linkAccount()">
+        {{ 'plugins.settings.custom.homebridge-gsh.label_link_account' | translate }}
+      </button>
+    </div>
+
+    <div class="text-center mt-1" *ngIf="pluginConfig.token">
+      <i class="fas fa-check-circle primary-text" style="font-size:50px;"></i>
+      <h4 class="mt-2">
+        {{ linkType | titlecase }}
+        {{ 'plugins.settings.custom.homebridge-gsh.label_account_linked' | translate }}
+      </h4>
+
+      <div class="mt-3" *ngIf="justLinked">
+        <p class="primary-text">
+          <strong>
+            {{ 'plugins.settings.custom.homebridge-gsh.message_homebridge_restart_required' | translate }}
+          </strong>
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-3">
+      Search for
+      <a href="https://assistant.google.com/services/a/uid/000000b558f0d5d1?hl=en">Homebridge in the Google Home app</a>
+      and link the action to complete setup.
+    </div>
+
+    <div class="card p-2 pt-3 mt-4">
+      <legend class="pointer" (click)="showAdvanced = !showAdvanced">
+        <i class="fas fa-fw" [ngClass]="{'fa-chevron-right': !showAdvanced, 'fa-chevron-down': showAdvanced}"></i>
+        Advanced Settings
+      </legend>
+
+      <div *ngIf="showAdvanced" class="hb-plugin-settings-modal">
+        <div [formGroup]="form">
+          <div class="form-group">
+            <h5>Debug Mode</h5>
+            <p class="primary-text">
+              Enabling debug mode can help troubleshoot problems. If you are experiencing problems with this plugin you
+              should enable debug logging and include the results in your support request.
+            </p>
+            <label class="hb-uix-switch">
+              <input type="checkbox" formControlName="debug">
+              <span>Enable Debug Logging</span>
+              <span class="hb-uix-slider hb-uix-round"></span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <h5>Two Factor Authentication</h5>
+            <p class="primary-text">
+              If you provide a two factor authentication code, the Google Assistant will prompt
+              you for your code before performing certain actions. e.g. unlocking a Lock Mechanism.
+            </p>
+            <input type="text" class="form-control" formControlName="twoFactorAuthPin" placeholder="eg. 1234">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
