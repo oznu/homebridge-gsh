@@ -44,39 +44,5 @@
       and link the action to complete setup.
     </div>
 
-    <div class="card p-2 pt-3 mt-4">
-      <legend class="pointer" (click)="showAdvanced = !showAdvanced">
-        <i class="fas fa-fw" [ngClass]="{'fa-chevron-right': !showAdvanced, 'fa-chevron-down': showAdvanced}"></i>
-        Advanced Settings
-      </legend>
-
-      <div *ngIf="showAdvanced" class="hb-plugin-settings-modal">
-        <div [formGroup]="form">
-          <div class="form-group">
-            <h5>Debug Mode</h5>
-            <p class="primary-text">
-              Enabling debug mode can help troubleshoot problems. If you are experiencing problems with this plugin you
-              should enable debug logging and include the results in your support request.
-            </p>
-            <label class="hb-uix-switch">
-              <input type="checkbox" formControlName="debug">
-              <span>Enable Debug Logging</span>
-              <span class="hb-uix-slider hb-uix-round"></span>
-            </label>
-          </div>
-
-          <div class="form-group">
-            <h5>Two Factor Authentication</h5>
-            <p class="primary-text">
-              If you provide a two factor authentication code, the Google Assistant will prompt
-              you for your code before performing certain actions. e.g. unlocking a Lock Mechanism.
-            </p>
-            <input type="text" class="form-control" formControlName="twoFactorAuthPin" placeholder="eg. 1234">
-          </div>
-        </div>
-      </div>
-
-    </div>
-
   </div>
 </div>

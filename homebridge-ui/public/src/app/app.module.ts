@@ -14,8 +14,6 @@ import { TranslatePipe } from './translate.pipe';
   ],
   imports: [
     BrowserModule,
-    FormsModule,
-    ReactiveFormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

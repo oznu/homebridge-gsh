@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { PluginConfig, PluginSchema, ServerEnvMetadata } from '@homebridge/plugin-ui-utils/dist/ui.interface';
@@ -22,7 +21,6 @@ export class AppComponent implements OnInit, OnDestroy {
   public pluginConfig: PluginConfig;
   public schema: PluginSchema;
   public env: ServerEnvMetadata['env'] = window.homebridge.serverEnv.env;
-  public form: FormGroup;
 
   public linkType: string;
   public justLinked = false;
@@ -45,32 +43,14 @@ export class AppComponent implements OnInit, OnDestroy {
       };
     } else {
       this.pluginConfig = configBlocks[0];
+      window.homebridge.showSchemaForm();
     }
 
-    this.generateForm();
     this.parseToken();
-
     this.ready = true;
 
-    window.addEventListener('message', this.windowMessageListener, false);
-  }
-
-  generateForm() {
-    this.form = new FormGroup({
-      platform: new FormControl(this.schema.pluginAlias),
-      name: new FormControl(this.pluginConfig.name || 'Google Smart Home'),
-      notice: new FormControl('Keep your token a secret!'),
-      twoFactorAuthPin: new FormControl(this.pluginConfig.twoFactorAuthPin, [Validators.pattern(/^[0-9]*$/)]),
-      debug: new FormControl(this.pluginConfig.debug || false)
-    });
-
-    this.form.valueChanges.subscribe((value) => {
-      value.token = this.pluginConfig.token;
-      if (!value.twoFactorAuthPin) {
-        delete value.twoFactorAuthPin;
-      }
-      this.pluginConfig = value;
-      this.updateConfig();
+    window.homebridge.addEventListener('configChanged', (event: MessageEvent) => {
+      this.pluginConfig = event.data[0];
     });
   }
 
@@ -79,6 +59,8 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   linkAccount() {
+    window.addEventListener('message', this.windowMessageListener, false);
+
     const w = 450;
     const h = 700;
     const y = window.top.outerHeight / 2 + window.top.screenY - (h / 2);
@@ -105,8 +87,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
 
     this.parseToken();
+    this.justLinked = true;
     await this.updateConfig();
     await window.homebridge.savePluginConfig();
+    window.homebridge.showSchemaForm();
   }
 
   parseToken() {
@@ -126,7 +110,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   windowMessageListener = (e) => {
     if (e.origin !== this.linkDomain) {
-      console.log('Refusing to process message from', e.origin);
       return;
     }
 
