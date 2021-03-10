@@ -40,7 +40,7 @@ export class Switch {
 
   query(service: HapService) {
     return {
-      on: service.characteristics.find(x => x.type === Characteristic.On).value,
+      on: service.characteristics.find(x => x.type === Characteristic.On).value ? true : false,
       online: true,
     };
   }

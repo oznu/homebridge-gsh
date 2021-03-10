@@ -60,7 +60,7 @@ export class Lightbulb {
 
   query(service: HapService) {
     const response = {
-      on: service.characteristics.find(x => x.type === Characteristic.On).value,
+      on: service.characteristics.find(x => x.type === Characteristic.On).value ? true : false,
       online: true,
     } as any;
 
