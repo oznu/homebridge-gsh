@@ -85,6 +85,7 @@ export class Hap {
 
   instanceBlacklist: Array<string> = [];
   accessoryFilter: Array<string> = [];
+  accessorySerialFilter: Array<string> = [];
   deviceNameMap: Array<{ replace: string; with: string }> = [];
 
   constructor(socket, log, pin: string, config: PluginConfig) {
@@ -94,6 +95,7 @@ export class Hap {
     this.pin = pin;
 
     this.accessoryFilter = config.accessoryFilter || [];
+    this.accessorySerialFilter = config.accessorySerialFilter || [];
     this.instanceBlacklist = config.instanceBlacklist || [];
 
     this.log.debug('Waiting 15 seconds before starting instance discovery...');
@@ -244,7 +246,7 @@ export class Hap {
                     status: 'ERROR',
                   });
                 }
-                return resolve();
+                return resolve(undefined);
               });
             });
           }
@@ -384,12 +386,19 @@ export class Hap {
 
           // perform user-defined service filters based on name
           if (this.accessoryFilter.includes(service.serviceName)) {
+            this.log.debug(`Skipping ${service.serviceName} ${service.accessoryInformation['Serial Number']} - matches accessoryFilter`);
+            return;
+          }
+
+          // perform user-defined service filters based on serial number
+          if (this.accessorySerialFilter.includes(service.accessoryInformation['Serial Number'])) {
+            this.log.debug(`Skipping ${service.serviceName} ${service.accessoryInformation['Serial Number']} - matches accessorySerialFilter'`);
             return;
           }
 
           // if 2fa is forced for this service type, but a pin has not been set ignore the service
-          if (this.types[service.serviceType].twoFactorRequired && !this.config.twoFactorAuthPin) {
-            this.log.warn(`Not registering ${service.serviceName} - Two Factor Authentication Pin has not been set and is required for ` +
+          if (this.types[service.serviceType].twoFactorRequired && !this.config.twoFactorAuthPin && !this.config.disablePinCodeRequirement) {
+            this.log.warn(`Not registering ${service.serviceName} - Pin cide has not been set and is required for secure ` +
               `${service.serviceType} accessory types. See https://git.io/JUQWX`);
             return;
           }

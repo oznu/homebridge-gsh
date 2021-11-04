@@ -29,9 +29,13 @@
         "default": "Keep your token a secret!"
       },
       "twoFactorAuthPin": {
-        "placeholder": "Two Factor Authentication Pin Code",
+        "placeholder": "Pin Code",
         "type": "string",
         "pattern": "^[0-9]*$"
+      },
+      "disablePinCodeRequirement": {
+        "title": "Disable Pin Code Requirement",
+        "type": "boolean"
       },
       "debug": {
         "title": "Enable Debug Logging",
@@ -51,6 +55,14 @@
         "type": "array",
         "items": {
           "title": "Accessory Name",
+          "type": "string"
+        }
+      },
+      "accessorySerialFilter": {
+        "title": "Accessory",
+        "type": "array",
+        "items": {
+          "title": "Accessory Serial",
           "type": "string"
         }
       },
@@ -74,7 +86,7 @@
         "debug",
         {
           "type": "help",
-          "helpvalue": "<h5>Two Factor Authentication</h5><em class='primary-text'>If you provide a two factor authentication code, the Google Assistant will prompt you for your code before performing certain actions. e.g. unlocking a Lock Mechanism.</em>"
+          "helpvalue": "<h5>Pin Code</h5><em class='primary-text'>If you provide a pin code, the Google Assistant will prompt you for your code before performing certain actions. e.g. unlocking a Lock Mechanism.</em>"
         },
         {
           "notitle": true,
@@ -82,7 +94,14 @@
         },
         {
           "type": "help",
-          "helpvalue": "<h5>Instance Blacklist</h5><em class='primary-text'>Enter the usernames of any Homebridge instances on your network that you don't want to be able to control from the Google Assistant.</em>"
+          "helpvalue": "<em class='primary-text'>Certain devices require a pin code to be set before they will be registered with Google Home. To overide this behaviour, check the box below. Use at your own risk.</em>"
+        },
+        {
+          "key": "disablePinCodeRequirement"
+        },
+        {
+          "type": "help",
+          "helpvalue": "<h5>Instance Blacklist</h5><em class='primary-text'>Enter the usernames of any Homebridge instances or child bridges on your network that you don't want to be able to control from the Google Assistant.</em>"
         },
         {
           "nodescription": true,
@@ -125,6 +144,31 @@
                   "flex": "1 1 50px",
                   "notitle": true,
                   "placeholder": "Enter accessory name..."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "help",
+          "helpvalue": "<em class='primary-text'>Enter the serial of the accessories you don't want to control from the Google Assistant.</em>"
+        },
+        {
+          "nodescription": true,
+          "notitle": true,
+          "key": "accessorySerialFilter",
+          "type": "array",
+          "items": [
+            {
+              "type": "div",
+              "displayFlex": true,
+              "flex-direction": "row",
+              "items": [
+                {
+                  "key": "accessorySerialFilter[]",
+                  "flex": "1 1 50px",
+                  "notitle": true,
+                  "placeholder": "Enter accessory serial..."
                 }
               ]
             }

@@ -6,8 +6,10 @@ export interface PluginConfig extends PlatformConfig {
   token: string;
   debug?: boolean;
   twoFactorAuthPin: string;
+  disablePinCodeRequirement?: boolean;
   instanceBlacklist?: Array<string>;
   accessoryFilter?: Array<string>;
+  accessorySerialFilter?: Array<string>;
   forceFahrenheit?: boolean;
 }
 
@@ -49,8 +51,9 @@ export interface HapService {
   characteristics: HapCharacteristic[];
   primary: boolean;
   hidden: boolean;
+  serialNumber: string;
 
-  // custom
+  // custom  
   uniqueId?: string;
   serviceName?: string;
   accessoryInformation?: any;
