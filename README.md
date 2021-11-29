@@ -36,6 +36,7 @@ Control your supported [Homebridge](https://github.com/nfarina/homebridge) acces
 
 ## Supported Device Types
 
+* Speaker
 * Switch
 * Outlet
 * Light Bulb
