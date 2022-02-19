@@ -9,6 +9,7 @@ export interface PluginConfig extends PlatformConfig {
   disablePinCodeRequirement?: boolean;
   instanceBlacklist?: Array<string>;
   accessoryFilter?: Array<string>;
+  accessoryFilterInverse?: boolean;
   accessorySerialFilter?: Array<string>;
   forceFahrenheit?: boolean;
 }

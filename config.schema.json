@@ -58,6 +58,10 @@
           "type": "string"
         }
       },
+      "accessoryFilterInverse": {
+        "title": "Inverse Blacklist (Whitelist Mode)",
+        "type": "boolean"
+      },
       "accessorySerialFilter": {
         "title": "Accessory",
         "type": "array",
@@ -149,6 +153,11 @@
             }
           ]
         },
+        {
+          "type": "help",
+          "helpvalue": "<h5>Inverse Accessory Blacklist</h5><em class='primary-text'>Use a whitelist of the accessories you only want to control from the Google Assistant.'</em>"
+        },
+        "accessoryFilterInverse",
         {
           "type": "help",
           "helpvalue": "<em class='primary-text'>Enter the serial of the accessories you don't want to control from the Google Assistant.</em>"
