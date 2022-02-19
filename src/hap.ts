@@ -85,6 +85,7 @@ export class Hap {
 
   instanceBlacklist: Array<string> = [];
   accessoryFilter: Array<string> = [];
+  accessoryFilterInverse: boolean;
   accessorySerialFilter: Array<string> = [];
   deviceNameMap: Array<{ replace: string; with: string }> = [];
 
@@ -95,6 +96,7 @@ export class Hap {
     this.pin = pin;
 
     this.accessoryFilter = config.accessoryFilter || [];
+    this.accessoryFilterInverse = config.accessoryFilterInverse || false;
     this.accessorySerialFilter = config.accessorySerialFilter || [];
     this.instanceBlacklist = config.instanceBlacklist || [];
 
@@ -385,7 +387,8 @@ export class Hap {
           }
 
           // perform user-defined service filters based on name
-          if (this.accessoryFilter.includes(service.serviceName)) {
+          if ((this.accessoryFilter.includes(service.serviceName) && !this.accessoryFilterInverse) ||
+            (!this.accessoryFilter.includes(service.serviceName) && this.accessoryFilterInverse)) {
             this.log.debug(`Skipping ${service.serviceName} ${service.accessoryInformation['Serial Number']} - matches accessoryFilter`);
             return;
           }
