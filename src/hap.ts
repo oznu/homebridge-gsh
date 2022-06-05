@@ -52,6 +52,8 @@ export class Hap {
     Thermostat: new Thermostat(this),
     Window: new Window(),
     WindowCovering: new WindowCovering(),
+    Speaker: new Television(),
+    InputSource: new Television(),
   };
 
   /* event tracking */
@@ -328,6 +330,9 @@ export class Hap {
    */
   async parseAccessories(instance: HapInstance) {
     instance.accessories.accessories.forEach((accessory) => {
+      let televisions: HapService[] = [];
+      let speakers: HapService[] = [];
+      let inputs: HapService[] = [];
       /** Ensure UUIDs are long form */
       for (const service of accessory.services) {
         service.type = toLongFormUUID(service.type);
@@ -369,6 +374,8 @@ export class Hap {
             .update(`${service.instance.username}${service.aid}${service.iid}${service.type}`)
             .digest('hex');
 
+	  //this.log.info(`type:${service.type} instance:${service.instance.username} aid:${service.aid} iid:${service.iid} uniqueId:${service.uniqueId}`)
+
           // discover name of service
           const serviceNameCharacteristic = service.characteristics.find(x => [
             Characteristic.Name,
@@ -403,8 +410,57 @@ export class Hap {
             return;
           }
 
+          // Skip television and related services to handle later
+	  if (service.type === Service.Television) {
+	    televisions.push(service)
+	    return;
+	  }
+	  if (service.type === Service.Speaker) {
+	    speakers.push(service)
+	    return;
+	  }
+	  if (service.type === Service.InputSource) {
+	    inputs.push(service)
+	    return;
+	  }
+
           this.services.push(service);
         });
+      // Merge television services into single service. 
+      if (televisions.length > 0) {	// should be only one.
+	if (speakers.length > 0) {	// should be only one.
+	  let c;
+	  if (c = speakers[0].characteristics.find(x => x.type == Characteristic.Mute)) {
+	    televisions[0].characteristics.push(c);
+	  }
+	  if (c = speakers[0].characteristics.find(x => x.type == Characteristic.VolumeSelector)) {
+	    televisions[0].characteristics.push(c);
+	  }
+	}
+	if (inputs.length > 0) {
+	  televisions[0].extras = {};
+	  televisions[0].extras.channels = [];
+	  televisions[0].extras.inputs = [];
+	  for (const service of inputs) {
+	    let s = service.characteristics.find(x => x.type == Characteristic.ConfiguredName).value;
+	    let c = {	// better to iterate by characteristics.
+	      Name: service.characteristics.find(x => x.type == Characteristic.Name).value,
+	      Identifier: service.characteristics.find(x => x.type == Characteristic.Identifier).value,
+	      InputSourceType: service.characteristics.find(x => x.type == Characteristic.InputSourceType).value,
+	    } as any;
+	    if (s.substring(0, 10) ===  'Station - ') {
+	      c.ConfiguredName = s.substring(10);
+	      televisions[0].extras.channels.push(c);
+	    } else {
+	      c.ConfiguredName = s;
+	      televisions[0].extras.inputs.push(c);
+	    }
+	  }
+	  //this.log.info(televisions[0].extras);
+	}
+	//console.log(`Found television Service: ${JSON.stringify(televisions[0])}`);
+        this.services.push(televisions[0]);
+      }
     });
   }
 
@@ -482,7 +538,11 @@ export class Hap {
 
     for (const uniqueId of pendingStateReport) {
       const service = this.services.find(x => x.uniqueId === uniqueId);
-      states[service.uniqueId] = this.types[service.serviceType].query(service);
+      if (service) {
+	states[service.uniqueId] = this.types[service.serviceType].query(service);
+      } else {
+	this.log.error(`uniqueId could not be found: ${JSON.stringify(pendingStateReport)}`);
+      }
     }
 
     return await this.sendStateReport(states);
