@@ -192,7 +192,7 @@ export class Television {
       case ('action.devices.commands.SetInput'): {
 	let value = 0;
 	const input = command.execution[0].params.newInput;
-	const c = service.extras.inputs.find(x => x.name === input);
+	const c = service.extras.inputs.find(x => x.Name === input);
 	if (c) {
 	  value = parseInt(c.Identifier);
 	}
