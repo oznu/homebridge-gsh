@@ -152,21 +152,15 @@ export class Hap {
    * Start processing
    */
   async start() {
-    this.log.info(`updating services...`);
     await this.getAccessories();
     await this.buildSyncResponse();
     await this.registerCharacteristicEventHandlers();
-    this.log.info(`done. Found ${this.services.size} services.`)
-    // for (const service of Array.from(this.services.values())) {
-    //   this.log.info(`type:${service.type} instance:${service.instance.username} aid:${service.aid} iid:${service.iid} uniqueId:${service.uniqueId}`);
-    // }
   }
 
   /**
    * Build Google SYNC intent payload
    */
   async buildSyncResponse() {
-    //const devices = this.services.map((service) => {
     const devices = Array.from(this.services.values()).map((service) => {
       return this.types[service.serviceType].sync(service);
     });
@@ -191,7 +185,6 @@ export class Hap {
     const response = {};
 
     for (const device of devices) {
-      //const service = this.services.find(x => x.uniqueId === device.id);
       const service = this.services.get(device.id);
       if (service) {
         await this.getStatus(service);
@@ -214,7 +207,6 @@ export class Hap {
     for (const command of commands) {
       for (const device of command.devices) {
 
-        //const service = this.services.find(x => x.uniqueId === device.id);
         const service = this.services.get(device.id);
 
         if (service) {
@@ -414,7 +406,6 @@ export class Hap {
             return;
           }
 
-          //this.services.push(service);
           this.services.set(uniqueId, service);
         });
     });
@@ -424,7 +415,6 @@ export class Hap {
    * Register hap characteristic event handlers
    */
   async registerCharacteristicEventHandlers() {
-    //for (const service of this.services) {
     for (const service of this.services.values()) {
       // get a list of characteristics we can watch
       const evCharacteristics = service.characteristics.filter(x => x.perms.includes('ev') && this.evTypes.includes(x.type));
@@ -475,7 +465,6 @@ export class Hap {
    */
   async handleHapEvent(events) {
     for (const event of events) {
-      //const accessories = this.services.filter(s =>
       const accessories = Array.from(this.services.values()).filter(s =>
         s.instance.ipAddress === event.host && s.instance.port === event.port && s.aid === event.aid);
       const service = accessories.find(x => x.characteristics.find(c => c.iid === event.iid));
@@ -495,7 +484,6 @@ export class Hap {
     const states = {};
 
     for (const uniqueId of pendingStateReport) {
-      //const service = this.services.find(x => x.uniqueId === uniqueId);
       const service = this.services.get(uniqueId);
       states[service.uniqueId] = this.types[service.serviceType].query(service);
     }
@@ -507,12 +495,10 @@ export class Hap {
     const states = {};
 
     // don't report state if there are no services
-    //if (!this.services.length) {
     if (!this.services.size) {
       return;
     }
 
-    //for (const service of this.services) {
     for (const service of this.services.values()) {
       states[service.uniqueId] = this.types[service.serviceType].query(service);
     }
