@@ -163,52 +163,51 @@ export class Television {
         return { payload };
       }
       case ('action.devices.commands.selectChannel'): {
-	let value = 0;
-	if (command.execution[0].params.channelCode) {
+	let payload = null;
+	let c;
+	if (command.execution[0].params?.channelCode) {
 	  const code = command.execution[0].params.channelCode;
-	  const c = service.extras.channels.find(x => x.name === code);
-	  if (c) {
-	    value = parseInt(c.Identifier) - 1;
+	  if (c = service.extras.channels.find(x => x.Name === code)) {
+            payload = {
+              characteristics: [{
+		aid: service.aid,
+		iid: service.characteristics.find(x => x.type === Characteristic.ActiveIdentifier).iid,
+		value: c.Identifier,
+              }],
+	    };
 	  }
-	} else if (command.execution[0].params.channelNumber) {
-	  //console.log(command.execution[0].params.channelNumber);
+	} else if (command.execution[0].params?.channelNumber) {
 	  const number = parseInt(command.execution[0].params.channelNumber) - 1;
-	  const c = service.extras.channels.find(x => x.Identifier === number);
-	  //console.log(c);
-	  if (c) {
-	    value = c.Identifier;
+	  if (c = service.extras.channels.find(x => x.Identifier === number)) {
+            payload = {
+              characteristics: [{
+		aid: service.aid,
+		iid: service.characteristics.find(x => x.type === Characteristic.ActiveIdentifier).iid,
+		value: c.Identifier,
+              }],
+	    };
 	  }
 	}
-        const payload = {
-          characteristics: [{
-            aid: service.aid,
-            iid: service.characteristics.find(x => x.type === Characteristic.ActiveIdentifier).iid,
-            value: value,
-          }],
-        };
-	//console.log(payload);
-        return { payload };
+	return { payload };
       }
       case ('action.devices.commands.SetInput'): {
-	let value = 0;
-	const input = command.execution[0].params.newInput;
-	const c = service.extras.inputs.find(x => x.Name === input);
-	if (c) {
-	  value = parseInt(c.Identifier);
+	const input = command.execution[0].params?.newInput;
+	let payload = null;
+	let c;
+	if (c = service.extras.inputs.find(x => x.Name === input)) {
+	  payload = {
+            characteristics: [{
+	      aid: service.aid,
+	      iid: service.characteristics.find(x => x.type === Characteristic.ActiveIdentifier).iid,
+	      value: parseInt(c.Identifier),
+            }],
+	  };
 	}
-        const payload = {
-          characteristics: [{
-            aid: service.aid,
-            iid: service.characteristics.find(x => x.type === Characteristic.ActiveIdentifier).iid,
-            value: value,
-          }],
-        };
-	//console.log(payload);
-        return { payload };
+	return { payload };
       }
     }
     
-    return { payload: { characteristics: [] } };
+    return { payload: null };
   }
 
 }

@@ -156,6 +156,7 @@ export class Hap {
     await this.getAccessories();
     await this.buildSyncResponse();
     await this.registerCharacteristicEventHandlers();
+    //this.log.info(`Found ${this.services.length} services.`)
   }
 
   /**
@@ -231,6 +232,14 @@ export class Hap {
           } else {
             // process the request
             const { payload, states } = this.types[service.serviceType].execute(service, command);
+	    if (!payload) {
+	      this.log.error(`Failed to control an accessory on executing ${command.execution[0].command}.`);
+	      response.push({
+		ids: [device.id],
+                status: 'ERROR',
+	      });
+	      continue;
+	    }
 
             await new Promise((resolve, reject) => {
               this.homebridge.HAPcontrol(service.instance.ipAddress, service.instance.port, JSON.stringify(payload), (err) => {
@@ -373,8 +382,6 @@ export class Hap {
           service.uniqueId = crypto.createHash('sha256')
             .update(`${service.instance.username}${service.aid}${service.iid}${service.type}`)
             .digest('hex');
-
-	  //this.log.info(`type:${service.type} instance:${service.instance.username} aid:${service.aid} iid:${service.iid} uniqueId:${service.uniqueId}`)
 
           // discover name of service
           const serviceNameCharacteristic = service.characteristics.find(x => [
