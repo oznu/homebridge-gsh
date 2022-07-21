@@ -83,6 +83,8 @@ export class Hap {
     Characteristic.CurrentRelativeHumidity,
     Characteristic.SecuritySystemTargetState,
     Characteristic.SecuritySystemCurrentState,
+    Characteristic.ActiveIdentifier,
+    Characteristic.Mute,
   ];
 
   instanceBlacklist: Array<string> = [];
