@@ -1,4 +1,3 @@
-
 import { Characteristic } from '../hap-types';
 import { HapService, AccessoryTypeExecuteResponse } from '../interfaces';
 
