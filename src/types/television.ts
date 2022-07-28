@@ -5,18 +5,20 @@ export class Television {
   sync(service: HapService) {
     let traits = [
       'action.devices.traits.OnOff',
-      //'action.devices.traits.MediaState',
+      'action.devices.traits.MediaState',
       //'action.devices.traits.Modes',
       //'action.devices.traits.Toggles',
-      //'action.devices.traits.AppSelector',
-      //'action.devices.traits.TransportControl',
+      'action.devices.traits.AppSelector',
+      'action.devices.traits.TransportControl',
     ];
     let attributes = {
       commandOnlyOnOff: false,	//OnOff
       queryOnlyOnOff: false,
-      //supportActivityState: false,//MediaState
-      //supportPlaybackState: false,
+      supportActivityState: false,//MediaState
+      supportPlaybackState: false,
     } as any;
+    attributes.availableApplications = [];
+    attributes.transportControlSupportedCommands = [];
     if (service.characteristics.find(x => x.type === Characteristic.VolumeSelector)) {
       traits.push('action.devices.traits.Volume');
       attributes.volumeCanMuteAndUnmute = service.characteristics.find(x => x.type === Characteristic.Mute) ? true : false;
@@ -116,8 +118,9 @@ export class Television {
       else {
 	i = service.extras.channels.find(x => x.Identifier === c.value);
       }
+      const a = service.characteristics.find(x => x.type === Characteristic.Active).value;
       const d = service.characteristics.find(x => x.type === Characteristic.Name).value;
-      console.log(`Current input selection of ${d} is ${i.ConfiguredName} and response is ${response.currentInput}.` );
+      console.log(`[${new Date().toLocaleString()}] Current input selection of ${d} is '${i.ConfiguredName}' and response is '${response.currentInput}'(${a}).` );
     }
     //console.log(response);
     
