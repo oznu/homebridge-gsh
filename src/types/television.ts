@@ -19,6 +19,15 @@ export class Television {
     } as any;
     attributes.availableApplications = [];
     attributes.transportControlSupportedCommands = [];
+    if (service.characteristics.find(x => x.type === Characteristic.RemoteKey)) {
+      attributes.transportControlSupportedCommands = [
+	'STOP',
+	'RESUME',
+	'PAUSE',
+	'NEXT',
+	'PREVIOUS',
+      ];
+    }
     if (service.characteristics.find(x => x.type === Characteristic.VolumeSelector)) {
       traits.push('action.devices.traits.Volume');
       attributes.volumeCanMuteAndUnmute = service.characteristics.find(x => x.type === Characteristic.Mute) ? true : false;
@@ -230,8 +239,6 @@ export class Television {
           }],
 	};
 	service.extras.channels.lastchannel = c;
-	// force to update to ready next channel operations.
-	// service.characteristics.find(x => x.type === Characteristic.ActiveIdentifier).value = c;
 	return { payload };
       }
       case ('action.devices.returnChannel'): {
@@ -250,8 +257,6 @@ export class Television {
           }],
 	};
 	service.extras.channels.lastchannel = c;
-	// force to update to ready next channel operations.
-	// service.characteristics.find(x => x.type === Characteristic.ActiveIdentifier).value = c;
 	return { payload };
       }
       case ('action.devices.commands.SetInput'): {
@@ -296,8 +301,6 @@ export class Television {
 	const states = {
 	  currentInput: service.extras.inputs.find(x => x.Identifier === c).Name,
 	}
-	// force to update to ready next Next/Previous
-	// service.characteristics.find(x => x.type === Characteristic.ActiveIdentifier).value = c;
 	return { payload, states };
       }
       case ('action.devices.commands.PreviousInput'): {
@@ -323,9 +326,70 @@ export class Television {
 	const states = {
 	  currentInput: service.extras.inputs.find(x => x.Identifier === c).Name,
 	}
-	// force to update to ready next Next/Previous
-	// service.characteristics.find(x => x.type === Characteristic.ActiveIdentifier).value = c;
 	return { payload, states };
+      }
+      // Characteristic.RemoteKey.REWIND = 0;
+      // Characteristic.RemoteKey.FAST_FORWARD = 1;
+      // Characteristic.RemoteKey.NEXT_TRACK = 2;
+      // Characteristic.RemoteKey.PREVIOUS_TRACK = 3;
+      // Characteristic.RemoteKey.ARROW_UP = 4;
+      // Characteristic.RemoteKey.ARROW_DOWN = 5;
+      // Characteristic.RemoteKey.ARROW_LEFT = 6;
+      // Characteristic.RemoteKey.ARROW_RIGHT = 7;
+      // Characteristic.RemoteKey.SELECT = 8;
+      // Characteristic.RemoteKey.BACK = 9;
+      // Characteristic.RemoteKey.EXIT = 10;
+      // Characteristic.RemoteKey.PLAY_PAUSE = 11;
+      // Characteristic.RemoteKey.INFORMATION = 15;
+      case ('action.devices.commands.mediaStop'): {
+	const payload = {
+          characteristics: [{
+	    aid: service.aid,
+	    iid: service.characteristics.find(x => x.type === Characteristic.RemoteKey).iid,
+	    value: 9, // Characteristic.RemoteKey.BACK,
+          }],
+	};
+	return { payload };
+      }
+      case ('action.devices.commands.mediaResume'): {
+	const payload = {
+          characteristics: [{
+	    aid: service.aid,
+	    iid: service.characteristics.find(x => x.type === Characteristic.RemoteKey).iid,
+	    value: 8, // Characteristic.RemoteKey.SELECT,
+          }],
+	};
+	return { payload };
+      }
+      case ('action.devices.commands.mediaPause'): {
+	const payload = {
+          characteristics: [{
+	    aid: service.aid,
+	    iid: service.characteristics.find(x => x.type === Characteristic.RemoteKey).iid,
+	    value: 11, // Characteristic.RemoteKey.PLAY_PAUSE,
+          }],
+	};
+	return { payload };
+      }
+      case ('action.devices.commands.mediaNext'): {
+	const payload = {
+          characteristics: [{
+	    aid: service.aid,
+	    iid: service.characteristics.find(x => x.type === Characteristic.RemoteKey).iid,
+	    value: 7, // Characteristic.RemoteKey.ARROW_RIGHT,
+          }],
+	};
+	return { payload };
+      }
+      case ('action.devices.commands.mediaPrevious'): {
+	const payload = {
+          characteristics: [{
+	    aid: service.aid,
+	    iid: service.characteristics.find(x => x.type === Characteristic.RemoteKey).iid,
+	    value: 6, // Characteristic.RemoteKey.ARROW_LEFT,
+          }],
+	};
+	return { payload };
       }
     }
     
