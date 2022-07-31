@@ -158,7 +158,6 @@ export class Hap {
     await this.getAccessories();
     await this.buildSyncResponse();
     await this.registerCharacteristicEventHandlers();
-    //this.log.info(`Found ${this.services.length} services.`)
   }
 
   /**
@@ -547,11 +546,7 @@ export class Hap {
 
     for (const uniqueId of pendingStateReport) {
       const service = this.services.find(x => x.uniqueId === uniqueId);
-      if (service) {
-	states[service.uniqueId] = this.types[service.serviceType].query(service);
-      } else {
-	this.log.error(`uniqueId could not be found: ${JSON.stringify(pendingStateReport)}`);
-      }
+      states[service.uniqueId] = this.types[service.serviceType].query(service);
     }
 
     return await this.sendStateReport(states);
