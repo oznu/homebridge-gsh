@@ -124,12 +124,6 @@ export class Television {
       if (i = service.extras.inputs.find(x => x.Identifier === c.value)) {
 	response.currentInput =  i.Name;
       }
-      else {
-	i = service.extras.channels.find(x => x.Identifier === c.value);
-      }
-      const a = service.characteristics.find(x => x.type === Characteristic.Active).value;
-      const d = service.characteristics.find(x => x.type === Characteristic.Name).value;
-      console.log(`[${new Date().toLocaleString()}] Current input selection of ${d} is '${i.ConfiguredName}' and response is '${response.currentInput}'(${a}).` );
     }
     //console.log(response);
     
@@ -194,7 +188,6 @@ export class Television {
               }],
 	    };
 	    service.extras.channels.lastchannel = c.Identifier;
-	    // service.characteristics.find(x => x.type === Characteristic.ActiveIdentifier).value = c.Identifier;
 	    return { payload };
 	  }
 	} else if (command.execution[0].params?.channelNumber) {
@@ -208,7 +201,6 @@ export class Television {
               }],
 	    };
 	    service.extras.channels.lastchannel = c.Identifier;
-	    // service.characteristics.find(x => x.type === Characteristic.ActiveIdentifier).value = c.Identifier;
 	    return { payload };
 	  }
       //} else if (command.execution[0].params?.channelName) {
@@ -221,8 +213,6 @@ export class Television {
 	let c = service.extras.channels.lastchannel !== undefined ?
 	    service.extras.channels.lastchannel :
 	    service.extras.channels[n - 1].Identifier;
-	const d = service.characteristics.find(x => x.type === Characteristic.Name).value;
-	// console.log(`Current channel selection of ${d} is ${c}.` );
 	if (change > 0) {
 	  if (++c > service.extras.channels[n - 1].Identifier)
 	    c = service.extras.channels[0].Identifier;
@@ -230,7 +220,6 @@ export class Television {
 	  if (--c < service.extras.channels[0].Identifier)
 	    c = service.extras.channels[n - 1].Identifier;
 	}
-	// console.log(`Next channel selection of ${d} is ${c}.` );
 	const payload = {
           characteristics: [{
 	    aid: service.aid,
@@ -243,12 +232,9 @@ export class Television {
       }
       case ('action.devices.returnChannel'): {
 	let c = service.characteristics.find(x => x.type === Characteristic.ActiveIdentifier).value;
-	const d = service.characteristics.find(x => x.type === Characteristic.Name).value;
-	// console.log(`Current channel selection of ${d} is ${c}.` );
 	c = service.extras.channels.lastchannel !== undefined ?
 	  service.extras.channels.lastchannel :
 	  service.extras.channels[0].Identifier;
-	// console.log(`Next channel selection of ${d} is ${c}.` );
 	const payload = {
           characteristics: [{
 	    aid: service.aid,
@@ -273,15 +259,12 @@ export class Television {
 	  const states = {
 	    currentInput: c.Name,
 	  }
-	  // service.characteristics.find(x => x.type === Characteristic.ActiveIdentifier).value = c.Identifier;
 	  return { payload, states };
 	}
 	break;
       }
       case ('action.devices.commands.NextInput'): {
 	let c = service.characteristics.find(x => x.type === Characteristic.ActiveIdentifier).value;
-	let d = service.characteristics.find(x => x.type === Characteristic.Name).value;
-	// console.log(`Current input selection of ${d} is ${c}.` );
 	let n = service.extras.inputs.length;
 	if (service.extras.channels.find(x => x.Identifier === c)) {
 	  c = service.extras.inputs[0].Identifier;
@@ -290,7 +273,6 @@ export class Television {
 	} else if (n > 1) {
 	  c++;
 	}
-	// console.log(`Next input selection of ${d} is ${c}.` );
 	const payload = {
           characteristics: [{
 	    aid: service.aid,
@@ -305,8 +287,6 @@ export class Television {
       }
       case ('action.devices.commands.PreviousInput'): {
 	let c = service.characteristics.find(x => x.type === Characteristic.ActiveIdentifier).value;
-	let d = service.characteristics.find(x => x.type === Characteristic.Name).value;
-	// console.log(`Current input selection of ${d} is ${c}.` );
 	let n = service.extras.inputs.length;
 	if (service.extras.channels.find(x => x.Identifier === c)) {
 	  c = service.extras.inputs[n - 1].Identifier;
@@ -315,7 +295,6 @@ export class Television {
 	} else if (n > 1) {
 	  c--;
 	}
-	// console.log(`Next input selection of ${d} is ${c}.` );
 	const payload = {
           characteristics: [{
 	    aid: service.aid,
