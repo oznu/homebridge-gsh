@@ -211,15 +211,19 @@ export class Television {
 	const change = command.execution[0].params?.relativeChannelChange;
 	const n = service.extras.channels.length;
 	let c = service.extras.channels.lastchannel !== undefined ?
-	    service.extras.channels.lastchannel :
-	    service.extras.channels[n - 1].Identifier;
+	    service.extras.channels.findIndex(x => x.Identifier === service.extras.channels.lastchannel) :
+	    n - 1;
+	// const d = service.characteristics.find(x => x.type === Characteristic.Name).value;
+	// console.log(`Current channel index of ${d} is ${c}.`);
 	if (change > 0) {
-	  if (++c > service.extras.channels[n - 1].Identifier)
-	    c = service.extras.channels[0].Identifier;
+	  if (++c > n - 1)
+	    c = 0;
 	} else if (change < 0) {
-	  if (--c < service.extras.channels[0].Identifier)
-	    c = service.extras.channels[n - 1].Identifier;
+	  if (--c < 0)
+	    c = n - 1;
 	}
+	// console.log(`Updated channel index of ${d} to ${c}.`);
+	c = service.extras.channels[c].Identifier;
 	const payload = {
           characteristics: [{
 	    aid: service.aid,
@@ -267,12 +271,17 @@ export class Television {
 	let c = service.characteristics.find(x => x.type === Characteristic.ActiveIdentifier).value;
 	let n = service.extras.inputs.length;
 	if (service.extras.channels.find(x => x.Identifier === c)) {
-	  c = service.extras.inputs[0].Identifier;
-	} else if (c === service.extras.inputs[n - 1].Identifier) {
-	  c = service.extras.inputs[0].Identifier;
-	} else if (n > 1) {
-	  c++;
+	  c = -1;
+	} else {
+	  c = service.extras.inputs.findIndex(x => x.Identifier === c);
 	}
+	// const d = service.characteristics.find(x => x.type === Characteristic.Name).value;
+	// console.log(`Current input index of ${d} is ${c}.`);
+	if (++c > n - 1) {
+	  c = 0;
+	}
+	// console.log(`Updated input index of ${d} to ${c}.`);
+	c = service.extras.inputs[c].Identifier;
 	const payload = {
           characteristics: [{
 	    aid: service.aid,
@@ -289,12 +298,17 @@ export class Television {
 	let c = service.characteristics.find(x => x.type === Characteristic.ActiveIdentifier).value;
 	let n = service.extras.inputs.length;
 	if (service.extras.channels.find(x => x.Identifier === c)) {
-	  c = service.extras.inputs[n - 1].Identifier;
-	} else if (c === service.extras.inputs[0].Identifier) {
-	  c = service.extras.inputs[n - 1].Identifier;
-	} else if (n > 1) {
-	  c--;
+	  c = -1;
+	} else {
+	  c = service.extras.inputs.findIndex(x => x.Identifier === c);
 	}
+	// const d = service.characteristics.find(x => x.type === Characteristic.Name).value;
+	// console.log(`Current input index of ${d} is ${c}.`);
+	if (--c < 0) {
+	  c = n - 1;
+	}
+	// console.log(`Updated input index of ${d} to ${c}.`);
+	c = service.extras.inputs[c].Identifier;
 	const payload = {
           characteristics: [{
 	    aid: service.aid,
