@@ -13,6 +13,7 @@ export class TemperatureSensor {
       id: service.uniqueId,
       type: 'action.devices.types.SENSOR',
       traits: [
+        'action.devices.traits.TemperatureSetting',
         'action.devices.traits.TemperatureControl',
       ],
       name: {
@@ -25,6 +26,8 @@ export class TemperatureSensor {
       },
       willReportState: true,
       attributes: {
+        queryOnlyTemperatureSetting: true,
+        thermostatTemperatureUnit: this.hap.config.forceFahrenheit ? 'F' : 'C',
         queryOnlyTemperatureControl: true,
         temperatureUnitForUX: this.hap.config.forceFahrenheit ? 'F' : 'C',
       },
@@ -49,6 +52,7 @@ export class TemperatureSensor {
       online: true,
       temperatureSetpointCelsius: service.characteristics.find(x => x.type === Characteristic.CurrentTemperature)?.value,
       temperatureAmbientCelsius: service.characteristics.find(x => x.type === Characteristic.CurrentTemperature)?.value,
+      thermostatTemperatureAmbient: service.characteristics.find(x => x.type === Characteristic.CurrentTemperature)?.value,
     } as any;
   }
 
