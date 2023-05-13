@@ -38,6 +38,7 @@ Control your supported [Homebridge](https://github.com/nfarina/homebridge) acces
 
 * Switch
 * Outlet
+* Air Purifier
 * Light Bulb
     * On / Off
     * Brightness
@@ -59,16 +60,28 @@ Control your supported [Homebridge](https://github.com/nfarina/homebridge) acces
 
 ## Installation Instructions
 
-#### Option 1: Install via Homebridge Config UI X:
+As this is a fork it needs to be manually installed 
 
-Search for "Google Home" in [homebridge-config-ui-x](https://github.com/oznu/homebridge-config-ui-x) and install `homebridge-gsh`.
-
-#### Option 2: Manually Install:
-
+clone repo 
+```bash
+git clone https://github.com/ewandank/homebridge-gsh-air-purifier/
 ```
-sudo npm install -g homebridge-gsh
+install depenedecies
+```bash
+npm install
 ```
-
+Build plugin 
+ ```
+ npm run build:plugin
+ ```
+ In the plugin built directory: 
+ ```
+ npm link
+ ```
+ In the homebridge directory
+ ```
+ npm link homebridge-gsh
+ ```
 ## Configuration
 
 To configure `homebridge-gsh` you must also be running [homebridge-config-ui-x](https://github.com/oznu/homebridge-config-ui-x).
