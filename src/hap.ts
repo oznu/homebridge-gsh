@@ -8,6 +8,7 @@ import { PluginConfig, HapInstance, HapService, HapCharacteristic, Instance } fr
 import { toLongFormUUID } from './uuid';
 import { Log } from './logger';
 
+import { ContactSensor } from './types/contact-sensor';
 import { Door } from './types/door';
 import { Fan } from './types/fan';
 import { Fanv2 } from './types/fan-v2';
@@ -36,6 +37,7 @@ export class Hap {
 
   /* init types */
   types = {
+    ContactSensor: new ContactSensor(),
     Door: new Door(),
     Fan: new Fan(),
     Fanv2: new Fanv2(),
