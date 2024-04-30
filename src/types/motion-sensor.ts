@@ -171,7 +171,7 @@ export class MotionSensor {
         const imageUrl = `https://drive.google.com/drive/search?q=screenshot-${timestamp}.jpg`; // Modify with the actual URL path
 
         // Command to capture a single frame
-        const command = `${ffmpegPath} -rtsp_transport tcp -i "${rtspString}" -vframes 1 -q:v 2 "${outputPath}"`;
+        const command = `${ffmpegPath} -analyzeduration 1000000 -probesize 1000000 -rtsp_transport tcp -i "${rtspString}" -vframes 1 -q:v 2 "${outputPath}"`;
         child_process.exec(command, (error, stdout, stderr) => {
             if (error) {
                 console.error('Error executing ffmpeg:', error);
@@ -188,7 +188,7 @@ export class MotionSensor {
         const videoUrl = `https://drive.google.com/drive/search?q=video-${timestamp}.mp4`; // Modify with the actual URL path
 
         // Construct the ffmpeg command
-        const command = `${ffmpegPath} -y -rtsp_transport tcp -i ${rtspString} -c:v libx264 -preset ultrafast -t 10 ${outputPath}`;
+        const command = `${ffmpegPath} -analyzeduration 1000000 -probesize 1000000 -y -rtsp_transport tcp -i ${rtspString} -c:v libx264 -preset ultrafast -t 10 ${outputPath}`;
 
         // Execute the ffmpeg command
         child_process.exec(command, (error, stdout, stderr) => {
@@ -196,7 +196,7 @@ export class MotionSensor {
                 console.error('Error executing ffmpeg:', error);
                 return;
             }
-            console.log('ffmpeg stdout:', stdout);
+            // console.log('ffmpeg stdout:', stdout);
             console.error('ffmpeg stderr:', stderr);
             this.sendNotification(`Motion detected! Video available at: ${videoUrl}`);
             this.manageOldFiles();
