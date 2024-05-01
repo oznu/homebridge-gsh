@@ -20,6 +20,13 @@ The SmartGuard Motion Detection System leverages your existing RTSP-enabled came
 - **Homebridge Integration**: Ensures full compatibility with iOS and Android via Homebridge-GSH.
 - **Efficient Storage Management**: Automatically manages storage of video and image files, adhering to user-defined limits.
 
+## Prerequisites
+
+- Node.js and npm installed
+- Homebridge setup with the [Homebridge-Google Smart Home](https://github.com/oznu/homebridge-gsh#readme) plugin
+- `ffmpeg-for-homebridge` installed for media processing
+- Access to RTSP stream URL from your security cameras
+
 ## Installation
 
 Ensure you have Homebridge installed with Homebridge-GSH. Then, install `ffmpeg-for-homebridge` for media handling.
@@ -30,7 +37,18 @@ sudo npm install -g ffmpeg-for-homebridge
 
 ## Configuration
 
-Set up your `.env` file with necessary environment variables including your RTSP stream URL and local storage paths. Further, configure the Homebridge-GSH plugin via Homebridge Config UI X for easy management.
+Set up your `.env` file with necessary environment variables including your RTSP stream URL and local storage paths. 
+
+```plaintext
+RTSP_STRING=rtsp://username:password@camera_ip:port
+SEND_MESSAGE_STRING=http://your_notification_endpoint
+DIRECTORY_TO_SAVE_STRING=/path/to/your/storage/directory
+MOTION_DETECTED_STRING=Motion detected!
+MAX_VIDEO_NUMBER=50
+MAX_IMAGE_NUMBER=50
+```
+
+Further, configure the Homebridge-GSH plugin via Homebridge Config UI X for easy management.
 
 ## Usage
 
