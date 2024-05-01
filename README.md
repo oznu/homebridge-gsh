@@ -13,6 +13,29 @@
 
 The SmartGuard Motion Detection System leverages your existing RTSP-enabled cameras to detect motion and notify you via Line Notify. It integrates with Homebridge to provide compatibility with Google Smart Home, allowing notifications and control across both iOS and Android devices.
 
+## Features
+
+- **Universal Compatibility**: Works with any RTSP-supported camera.
+- **Real-Time Notifications**: Utilizes Google Apps Script with Line Notify for instant alerts.
+- **Homebridge Integration**: Ensures full compatibility with iOS and Android via Homebridge-GSH.
+- **Efficient Storage Management**: Automatically manages storage of video and image files, adhering to user-defined limits.
+
+## Installation
+
+Ensure you have Homebridge installed with Homebridge-GSH. Then, install `ffmpeg-for-homebridge` for media handling.
+
+```bash
+sudo npm install -g ffmpeg-for-homebridge
+```
+
+## Configuration
+
+Set up your `.env` file with necessary environment variables including your RTSP stream URL and local storage paths. Further, configure the Homebridge-GSH plugin via Homebridge Config UI X for easy management.
+
+## Usage
+
+The system monitors for motion using your RTSP camera feeds, capturing video and images when motion is detected, and sending notifications through Line Notify via a Google Apps Script.
+
 ## Google Apps Script for Notifications
 
 This system utilizes a Google Apps Script to send notifications via Line Notify. Below is the script setup to manage POST requests:
@@ -79,9 +102,13 @@ Ensure you replace placeholder tokens with your actual Line Notify tokens.
 
 To send notifications through Line Notify, you will need a personal access token. Generate this token by visiting the [Line Notify token page](https://notify-bot.line.me/my/).
 
-## Installation and Configuration
+## Homebridge-GSH Integration
 
-Follow the detailed instructions for installing and configuring your Homebridge to Google Smart Home integration via [Homebridge-GSH](https://github.com/oznu/homebridge-gsh#readme).
+This system uses [Homebridge-GSH](https://github.com/oznu/homebridge-gsh#readme) for easy integration with Google Home devices, allowing voice control and remote management of your Homebridge connected devices.
+
+## Managing Media Files
+
+Automatic file management ensures your storage does not overflow by maintaining only the most recent recordings and images, effectively managing space by deleting the oldest files beyond set thresholds.
 
 ## License
 
