@@ -1,141 +1,94 @@
 <p align="center">
     <img src="https://raw.githubusercontent.com/homebridge/branding/master/logos/homebridge-color-round-stylized.png" height="140"><br>
-    <img src="https://user-images.githubusercontent.com/3979615/62948974-ba97f180-be28-11e9-8aef-d2a1d2f37cee.png" width="150">
+    <img src="https://user-images.githubusercontent.com/3979615/62948974-ba97f180-be28-11e9-8aef-d2a1d2f37cee.png" width="150"><br>
 </p>
 
 <span align="center">
 
-# Homebridge to Google Smart Home
-
-[![npm](https://img.shields.io/npm/v/homebridge-gsh.svg)](https://www.npmjs.com/package/homebridge-gsh)
-[![npm](https://img.shields.io/npm/dt/homebridge-gsh.svg)](https://www.npmjs.com/package/homebridge-gsh)
-[![Discord](https://img.shields.io/discord/432663330281226270?color=728ED5&logo=discord&label=discord)](https://discord.gg/cFFBuvp)
-[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
-[![Donate](https://img.shields.io/badge/donate-paypal-yellowgreen.svg)](https://paypal.me/oznu)
+# SmartGuard Motion Detection System
 
 </span>
 
-<!-- # Homebridge to Google Smart Home
+## Overview
 
-[![npm](https://img.shields.io/npm/v/homebridge-gsh.svg)](https://www.npmjs.com/package/homebridge-gsh)
-[![npm](https://img.shields.io/npm/dt/homebridge-gsh.svg)](https://www.npmjs.com/package/homebridge-gsh)
-[![Discord](https://img.shields.io/discord/432663330281226270?color=728ED5&logo=discord&label=discord)](https://discord.gg/cFFBuvp)
-[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
-[![Donate](https://img.shields.io/badge/donate-paypal-yellowgreen.svg)](https://paypal.me/oznu) -->
+The SmartGuard Motion Detection System leverages your existing RTSP-enabled cameras to detect motion and notify you via Line Notify. It integrates with Homebridge to provide compatibility with Google Smart Home, allowing notifications and control across both iOS and Android devices.
 
-Control your supported [Homebridge](https://github.com/nfarina/homebridge) accessories from any Google Home speaker or the Google Home mobile app. Inspired by [homebridge-alexa](https://github.com/NorthernMan54/homebridge-alexa).
+## Google Apps Script for Notifications
 
-* [Supported Device Types](#supported-device-types)
-* [Installation Instructions](#installation-instructions)
-* [Configuration](#configuration)
-* [Known Issues](#known-issues)
-* [Troubleshooting](#troubleshooting)
-* [Credits](#credits)
-* [License](#license)
-* [Sponsors](#sponsors)
+This system utilizes a Google Apps Script to send notifications via Line Notify. Below is the script setup to manage POST requests:
 
-## Supported Device Types
+```javascript
+function doPost(e) {
+  try {
+    if (e && e.postData && e.postData.type === "application/json") {
+      var content = JSON.parse(e.postData.contents);
+      if (content.message) {
+        sendLineNotification(content.message);
+        return ContentService.createTextOutput(JSON.stringify({ status: "success" }))
+          .setMimeType(ContentService.MimeType.JSON);
+      } else {
+        return sendError("No message provided");
+      }
+    } else {
+      return sendError("Invalid request or content type");
+    }
+  } catch (error) {
+    console.error('Error processing request:', error);
+    return sendError("Error processing request");
+  }
+}
 
-* Switch
-* Outlet
-* Light Bulb
-    * On / Off
-    * Brightness
-    * Color (Hue/Saturation)
-* Fan (On / Off)
-* Fan v2 (On / Off)
-* Window
-* Window Coverings
-* Door
-* Garage Door (2FA required)
-* Thermostat / Heater Cooler
-* Television (On / Off)
-* Lock Mechanism (2FA required)
-* Security System (2FA required)
-* Temperature Sensor
-* Humidity Sensor
+function sendLineNotification(message) {
+  var tokens = [
+    // Replace with actual tokens
+  ]; // Array of LINE Notify tokens
 
-*Note: Google Smart Home does not currently support all "sensor" devices such as Motion Sensors or Occupancy Sensors etc.*
+  var responses = [];
 
-## Installation Instructions
+  tokens.forEach(function(token) {
+    var options = {
+      method: "post",
+      headers: {
+        "Authorization": "Bearer " + token
+      },
+      payload: {
+        message: message
+      },
+      muteHttpExceptions: true
+    };
 
-#### Option 1: Install via Homebridge Config UI X:
+    var url = "https://notify-api.line.me/api/notify";
+    var response = UrlFetchApp.fetch(url, options);
+    console.log('LINE Notify response for token', token, ':', response.getContentText());
+    responses.push(response.getContentText());
+  });
 
-Search for "Google Home" in [homebridge-config-ui-x](https://github.com/oznu/homebridge-config-ui-x) and install `homebridge-gsh`.
+  return responses; // Optionally return responses for logging or other purposes
+}
 
-#### Option 2: Manually Install:
-
-```
-sudo npm install -g homebridge-gsh
-```
-
-## Configuration
-
-To configure `homebridge-gsh` you must also be running [homebridge-config-ui-x](https://github.com/oznu/homebridge-config-ui-x).
-
-1. Navigate to the Plugins page in [homebridge-config-ui-x](https://github.com/oznu/homebridge-config-ui-x).
-2. Click the **Settings** button for the Google Smart Home plugin.
-3. Click the **Link Account** button.
-4. Sign in with your Google or GitHub account.
-5. Your account is now linked.
-6. Restart Homebridge for the changes to take effect.
-7. Add the [Homebridge Action](https://assistant.google.com/services/a/uid/000000b558f0d5d1?hl=en) using the Google Home mobile app. [See Wiki](https://github.com/oznu/homebridge-gsh/wiki#add-homebridge-to-google-home-app) for detailed instructions.
-
-![homebridge-gsh-signup](https://user-images.githubusercontent.com/3979615/62948031-ff228d80-be26-11e9-9e07-ef1023f28fa8.gif)
-
-### Enabling Accessory Control
-
-Homebridge must be running in insecure mode to allow accessory control via this plugin. See [Enabling Accessory Control](https://github.com/oznu/homebridge-config-ui-x/wiki/Enabling-Accessory-Control) for instructions.
-
-### Multiple Homebridge Instances
-
-This plugin **must** only be configured on one Homebridge instance on your network as the plugin will discover all your other Homebridge instances and be able to control them. For this to work:
-
-* all instances must be running [in insecure mode](https://github.com/oznu/homebridge-config-ui-x/wiki/Enabling-Accessory-Control)
-* all instances must have the same PIN defined in the `config.json`
-
-## Known Issues
-
-1. Only one Homebridge instance can be linked to an account (even across different local networks). You will experience unintended results if you try and link more than one instance to the same account.
-
-## Troubleshooting
-
-#### 1. Errors during installation
-
-Make sure you installed the package with `sudo` flag. Most installation errors can be fixed by removing the plugin and reinstalling:
-
-```shell
-# cleanup
-sudo npm uninstall -g homebridge-gsh
-
-# reinstall
-sudo npm install -g homebridge-gsh
+function sendError(errorMessage) {
+  console.error(errorMessage);
+  return ContentService.createTextOutput(JSON.stringify({ status: "error", message: errorMessage }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
 ```
 
-#### 2. Cannot control accessories
+Ensure you replace placeholder tokens with your actual Line Notify tokens.
 
-See [Enabling Accessory Control](https://github.com/oznu/homebridge-config-ui-x/wiki/Enabling-Accessory-Control) and [Multiple Homebridge Instances](#multiple-homebridge-instances).
+### Generating a Line Notify Token
 
-#### 3. Ask on Discord
+To send notifications through Line Notify, you will need a personal access token. Generate this token by visiting the [Line Notify token page](https://notify-bot.line.me/my/).
 
-Join the [Official Homebridge Discord](https://discord.gg/cFFBuvp) community and ask in the [#homebridge-gsh](https://discord.gg/cFFBuvp) channel.
+## Installation and Configuration
 
-## Contributing
-
-Please see [CONTRIBUTING.md](CONTRIBUTING.md).
-
-## Credits
-
-* [NorthernMan54](https://github.com/NorthernMan54) - developer of the [Hap-Node-Client](https://github.com/NorthernMan54/Hap-Node-Client) module which is used by this plugin.
+Follow the detailed instructions for installing and configuring your Homebridge to Google Smart Home integration via [Homebridge-GSH](https://github.com/oznu/homebridge-gsh#readme).
 
 ## License
 
-Copyright (C) 2019 oznu
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+## Credits
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the [GNU General Public License](./LICENSE) for more details.
-
-## Sponsors
-
-<a width="150" height="50" href="https://auth0.com/?utm_source=oss&utm_medium=gp&utm_campaign=oss" target="_blank" alt="Single Sign On & Token Based Authentication - Auth0"><img width="150" height="50" alt="JWT Auth for open source projects" src="https://cdn.auth0.com/oss/badges/a0-badge-dark.png"/></a>
+- [oznu](https://github.com/oznu) - For developing Homebridge and the Google Smart Home plugin.
+- [NorthernMan54](https://github.com/NorthernMan54) - For creating Hap-Node-Client which facilitates communication with HomeKit-enabled accessories
+---
