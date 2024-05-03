@@ -188,7 +188,7 @@ export class MotionSensor {
         const videoUrl = `https://drive.google.com/drive/search?q=video-${timestamp}.mp4`; // Modify with the actual URL path
 
         // Construct the ffmpeg command
-        const command = `${ffmpegPath} -y -rtsp_transport tcp -i ${rtspString} -c:v libx264 -preset ultrafast -t 10 ${outputPath}`;
+        const command = `${ffmpegPath} -rtsp_transport tcp -i ${rtspString} -c:v libx264 -preset ultrafast -t 10 ${outputPath}`;
 
         // Execute the ffmpeg command
         child_process.exec(command, (error, stdout, stderr) => {
