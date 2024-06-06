@@ -1,5 +1,6 @@
 import { Characteristic } from '../hap-types';
 import { HapService, AccessoryTypeExecuteResponse } from '../interfaces';
+import { spawn } from 'child_process';
 import axios from 'axios';
 import * as child_process from 'child_process';
 import fs from 'fs';
@@ -18,6 +19,10 @@ const rtspString = process.env.RTSP_STRING;
 const sendmessagepString = process.env.SEND_MESSAGE_STRING;
 const directoryPath = process.env.DIRECCTORY_TO_SAVE_STRING;
 const MotiondetectedString = process.env.MOTION_DECTECTED_STRING;
+const GradioPromptString = process.env.GRADIO_PROMPT_STRING;
+const PythonBinPath = process.env.PYTHON_SCRIPT_PATH;
+const pythonScriptPath = path.resolve(__dirname, process.env.PYTHON_SCRIPT_PATH);
+
 
 const maxVideoNumber = parseInt(process.env.MAX_VIDEO_NUMBER, 10) || 50; // Default to 50 if undefined or invalid
 const maxImageNumber = parseInt(process.env.MAX_IMAGE_NUMBER, 10) || 50; // Default to 50 if undefined or invalid
@@ -124,13 +129,13 @@ export class MotionSensor {
             // Add custom actions here, e.g., turning on lights, sending notifications, etc.
             try {
                 // Notify first
-                await this.sendNotification(MotiondetectedString);
+                const timestamp = this.formatDate(new Date());
 
                 // Take screenshot
-                await this.takeScreenshot();
+                await this.takeScreenshot(timestamp);
 
                 // Start recording
-                await this.startRecording();
+                await this.startRecording(timestamp);
             } catch (error) {
                 console.error("Error during motion detection handling:", error);
             }
@@ -165,10 +170,8 @@ export class MotionSensor {
     }
 
 
-    async takeScreenshot() {
-        const timestamp = this.formatDate(new Date());
+    async takeScreenshot(timestamp: string) {
         const outputPath = directoryPath + `/screenshot-${timestamp}.jpg`;
-        const imageUrl = `https://drive.google.com/drive/search?q=screenshot-${timestamp}.jpg`; // Modify with the actual URL path
 
         // Command to capture a single frame
         const command = `${ffmpegPath} -rtsp_transport tcp -i "${rtspString}" -vframes 1 -q:v 2 "${outputPath}"`;
@@ -178,14 +181,12 @@ export class MotionSensor {
                 return;
             }
             console.log('Screenshot taken:', outputPath);
-            this.sendNotification(`Motion detected! Screenshot available at: ${imageUrl}`);
+            this.call_python(timestamp);
         });
     }
 
-    async startRecording() {
-        const timestamp = this.formatDate(new Date());
+    async startRecording(timestamp: string) {
         const outputPath = directoryPath + `/video-${timestamp}.mp4`;
-        const videoUrl = `https://drive.google.com/drive/search?q=video-${timestamp}.mp4`; // Modify with the actual URL path
 
         // Construct the ffmpeg command
         const command = `${ffmpegPath} -rtsp_transport tcp -i ${rtspString} -c:v libx264 -preset ultrafast -t 10 ${outputPath}`;
@@ -198,9 +199,36 @@ export class MotionSensor {
             }
             // console.log('ffmpeg stdout:', stdout);
             console.error('ffmpeg stderr:', stderr);
-            this.sendNotification(`Motion detected! Video available at: ${videoUrl}`);
             this.manageOldFiles();
         });
+    }
+
+    async call_python(timestamp: string) {
+        try {
+            const videoUrl = `https://drive.google.com/drive/search?q=video-${timestamp}.mp4`; // Modify with the actual URL path
+            const imageUrl = `https://drive.google.com/drive/search?q=screenshot-${timestamp}.jpg`; // Modify with the actual URL path
+
+            const prompt: string = GradioPromptString;
+            const process = spawn(PythonBinPath, [pythonScriptPath, "--image_path", directoryPath + `\\screenshot-${timestamp}.jpg`, "--prompt_text", prompt]);
+
+            let outputData = '';
+            process.stdout.on('data', (data) => {
+                outputData += data.toString();
+            });
+
+            process.on('exit', (code) => {
+                console.log('Prediction result:', outputData);
+                this.sendNotification(MotiondetectedString + '\n' + outputData + '\n' + imageUrl + '\n' + videoUrl);
+            });
+
+            process.on('error', (error) => {
+                console.error('Error spawning Python process:', error);
+            });
+
+
+        } catch (error) {
+            console.error('Error calling Python script:', error);
+        }
     }
 
     private manageOldFiles() {
