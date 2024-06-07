@@ -20,9 +20,9 @@ const sendmessagepString = process.env.SEND_MESSAGE_STRING;
 const directoryPath = process.env.DIRECCTORY_TO_SAVE_STRING;
 const MotiondetectedString = process.env.MOTION_DECTECTED_STRING;
 const GradioPromptString = process.env.GRADIO_PROMPT_STRING;
-const PythonBinPath = process.env.PYTHON_SCRIPT_PATH;
-const pythonScriptPath = path.resolve(__dirname, process.env.PYTHON_SCRIPT_PATH);
-
+const PythonBinPath = process.env.PYTHON_BIN_PATH;
+const pythonScriptPath: string = path.resolve(__dirname, '../../call_gradio_local_server.py');
+console.log(pythonScriptPath); // This will log the resolved path to the .env file
 
 const maxVideoNumber = parseInt(process.env.MAX_VIDEO_NUMBER, 10) || 50; // Default to 50 if undefined or invalid
 const maxImageNumber = parseInt(process.env.MAX_IMAGE_NUMBER, 10) || 50; // Default to 50 if undefined or invalid
@@ -171,7 +171,7 @@ export class MotionSensor {
 
 
     async takeScreenshot(timestamp: string) {
-        const outputPath = directoryPath + `/screenshot-${timestamp}.jpg`;
+        const outputPath = directoryPath + `\\screenshot-${timestamp}.jpg`;
 
         // Command to capture a single frame
         const command = `${ffmpegPath} -rtsp_transport tcp -i "${rtspString}" -vframes 1 -q:v 2 "${outputPath}"`;
@@ -181,13 +181,11 @@ export class MotionSensor {
                 return;
             }
             console.log('Screenshot taken:', outputPath);
-            this.call_python(timestamp);
         });
     }
 
     async startRecording(timestamp: string) {
-        const outputPath = directoryPath + `/video-${timestamp}.mp4`;
-
+        const outputPath = directoryPath + `\\video-${timestamp}.mp4`;
         // Construct the ffmpeg command
         const command = `${ffmpegPath} -rtsp_transport tcp -i ${rtspString} -c:v libx264 -preset ultrafast -t 10 ${outputPath}`;
 
@@ -197,8 +195,8 @@ export class MotionSensor {
                 console.error('Error executing ffmpeg:', error);
                 return;
             }
-            // console.log('ffmpeg stdout:', stdout);
-            console.error('ffmpeg stderr:', stderr);
+            console.log('Video taken:', outputPath);
+            this.call_python(timestamp);
             this.manageOldFiles();
         });
     }
@@ -207,23 +205,28 @@ export class MotionSensor {
         try {
             const videoUrl = `https://drive.google.com/drive/search?q=video-${timestamp}.mp4`; // Modify with the actual URL path
             const imageUrl = `https://drive.google.com/drive/search?q=screenshot-${timestamp}.jpg`; // Modify with the actual URL path
-
+            const imagePath: string = directoryPath + `\\screenshot-${timestamp}.jpg`;
             const prompt: string = GradioPromptString;
-            const process = spawn(PythonBinPath, [pythonScriptPath, "--image_path", directoryPath + `\\screenshot-${timestamp}.jpg`, "--prompt_text", prompt]);
+            // console.log('PythonBinPath:', PythonBinPath);
+            // console.log('pythonScriptPath:', pythonScriptPath);
 
-            let outputData = '';
-            process.stdout.on('data', (data) => {
-                outputData += data.toString();
-            });
+            if (fs.existsSync(pythonScriptPath)) {
+                const process = spawn(PythonBinPath, [pythonScriptPath, "--image_path", imagePath, "--prompt_text", prompt]);
+                let outputData = '';
+                process.stdout.on('data', (data) => {
+                    outputData += data.toString();
+                });
 
-            process.on('exit', (code) => {
-                console.log('Prediction result:', outputData);
-                this.sendNotification(MotiondetectedString + '\n' + outputData + '\n' + imageUrl + '\n' + videoUrl);
-            });
+                process.stderr.on('data', (data) => {
+                    console.error('Python Error:', data.toString());
+                });
 
-            process.on('error', (error) => {
-                console.error('Error spawning Python process:', error);
-            });
+                process.on('exit', (code) => {
+                    this.sendNotification(MotiondetectedString + '\n' + outputData + '\n' + imageUrl + '\n' + videoUrl);
+                });
+            } else {
+                console.error('Python script file does not exist:', pythonScriptPath);
+            }
 
 
         } catch (error) {
