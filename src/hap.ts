@@ -147,6 +147,7 @@ export class Hap {
 
     this.homebridge.on('hapEvent', ((event) => {
       this.handleHapEvent(event);
+      this.log.info('Hap event happened');
     }));
   }
 
