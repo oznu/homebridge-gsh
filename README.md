@@ -11,7 +11,7 @@
 
 ## Overview
 
-The SmartGuard Motion Detection System utilizes RTSP-enabled cameras to monitor your property. It detects motion, captures media (video and image), sends notifications, and employs a Python script for advanced processing. This setup ensures compatibility with both iOS and Android devices through Homebridge integration.
+The SmartGuard Motion Detection System utilizes RTSP-enabled cameras to monitor your property. It detects motion, captures media (video and image), sends notifications, and employs a Python script for advanced processing. This setup ensures compatibility with both **iOS** and **Android** devices through Homebridge integration.
 
 ## Features
 
