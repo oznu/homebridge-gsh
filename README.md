@@ -11,15 +11,17 @@
 
 ## Overview
 
-The SmartGuard Motion Detection System utilizes RTSP-enabled cameras to monitor your property. It detects motion, captures media (video and image), sends notifications, and employs a Python script for advanced processing. This setup ensures compatibility with both **iOS** and **Android** devices through Homebridge integration.
+The SmartGuard Motion Detection System leverages RTSP-enabled cameras to monitor environments effectively. It detects motion, captures media (video and image), sends real-time notifications, and employs an advanced Python script for in-depth analysis and responsive actions. This robust system is designed for compatibility with both **iOS** and **Android** devices through Homebridge integration.
 
 ## Features
 
-- **Universal Compatibility**: Works with any camera that supports RTSP.
-- **Real-Time Notifications**: Utilizes Line Notify via a Google Apps Script for immediate alerts.
-- **Homebridge Integration**: Compatible with iOS and Android through the Homebridge-GSH plugin.
-- **Advanced Analytics**: Incorporates a Python script to perform detailed analysis on the media captured when motion is detected, enabling customized responses based on the analysis.
-- **Efficient Storage Management**: Automatically manages the storage of video and image files, adhering to user-defined limits.
+- **Universal Compatibility**: Compatible with any security camera that supports RTSP, providing flexible deployment options across different hardware.
+- **Real-Time Notifications**: Employs Line Notify powered by a Google Apps Script to deliver instant alerts upon motion detection, ensuring timely awareness.
+- **Advanced Media Analysis**: Integrates a sophisticated Python script that utilizes machine learning to analyze captured media, enhancing the identification of specific threats or anomalies.
+- **Proactive Security Responses**: The script's analysis can trigger specific, automated security responses such as turning on additional cameras, locking doors, or activating alarms.
+- **Homebridge Integration**: Fully compatible with iOS and Android through the Homebridge-GSH plugin, allowing for seamless operation and integration with smart home ecosystems.
+- **Efficient Storage Management**: Implements smart storage strategies that automatically manage video and image files, maintaining operational efficiency by adhering to set storage limits.
+- **Customizable Action Triggers**: Based on the Python script’s output, the system can execute customized actions, enhancing security measures and providing tailored responses to different situations.
 
 ## Prerequisites
 
@@ -128,25 +130,25 @@ function sendError(errorMessage) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 ```
-Replace placeholder tokens with actual Line Notify tokens.
+Ensure you replace placeholder tokens with your actual Line Notify tokens.
 
 ### Generating a Line Notify Token
 
-Generate a personal access token for notifications through Line Notify by visiting their token page.
+To send notifications through Line Notify, you will need a personal access token. Generate this token by visiting the [Line Notify token page](https://notify-bot.line.me/my/).
 
 ## Homebridge-GSH Integration
 
-This system utilizes Homebridge-GSH for integration with Google Home devices, enhancing control and accessibility.
+This system uses [Homebridge-GSH](https://github.com/oznu/homebridge-gsh#readme) for easy integration with Google Home devices, allowing voice control and remote management of your Homebridge-connected devices.
 
 ## Managing Media Files
 
-The automatic management of media files prevents storage overflow by maintaining only the most recent files and deleting older ones beyond set limits.
+Automatic file management ensures your storage does not overflow by maintaining only the most recent recordings and images, effectively managing space by deleting the oldest files beyond set thresholds.
 
 ## License
 
-Licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Credits
 
-- [oznu](https://github.com/oznu) - Developer of Homebridge and the Google Smart Home plugin.
-- [NorthernMan54](https://github.com/NorthernMan54) - Creator of Hap-Node-Client, which facilitates communication with HomeKit-enabled accessories.
+- [oznu](https://github.com/oznu) - For developing Homebridge and the Google Smart Home plugin.
+- [NorthernMan54](https://github.com/NorthernMan54) - For creating Hap-Node-Client which facilitates communication with HomeKit-enabled accessories
