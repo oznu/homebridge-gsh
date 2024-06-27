@@ -11,26 +11,26 @@
 
 ## Overview
 
-The SmartGuard Motion Detection System utilizes your existing RTSP-enabled cameras to detect motion and notify you via Line Notify, and integrates with Homebridge to provide compatibility with Google Smart Home for control across both **iOS** and **Android** devices. This system also includes a Python script to process images and videos when motion is detected, adding advanced analytics and custom actions based on the results.
+The SmartGuard Motion Detection System utilizes RTSP-enabled cameras to monitor your property. It detects motion, captures media (video and image), sends notifications, and employs a Python script for advanced processing. This setup ensures compatibility with both iOS and Android devices through Homebridge integration.
 
 ## Features
 
-- **Universal Compatibility**: Works with any RTSP-supported camera.
-- **Real-Time Notifications**: Utilizes Google Apps Script with Line Notify for instant alerts.
-- **Homebridge Integration**: Ensures full compatibility with iOS and Android via Homebridge-GSH.
-- **Advanced Analytics**: Calls a local Python script to analyze detected motion and handle custom alerts.
-- **Efficient Storage Management**: Automatically manages storage of video and image files, adhering to user-defined limits.
+- **Universal Compatibility**: Works with any camera that supports RTSP.
+- **Real-Time Notifications**: Utilizes Line Notify via a Google Apps Script for immediate alerts.
+- **Homebridge Integration**: Compatible with iOS and Android through the Homebridge-GSH plugin.
+- **Advanced Analytics**: Incorporates a Python script to perform detailed analysis on the media captured when motion is detected, enabling customized responses based on the analysis.
+- **Efficient Storage Management**: Automatically manages the storage of video and image files, adhering to user-defined limits.
 
 ## Prerequisites
 
 - Node.js and npm installed
-- Homebridge setup with the [Homebridge-Google Smart Home](https://github.com/oznu/homebridge-gsh#readme) plugin
+- Homebridge setup with the Homebridge-Google Smart Home plugin
 - `ffmpeg-for-homebridge` installed for media processing
 - Access to RTSP stream URL from your security cameras
 
 ## Installation
 
-Ensure you have Homebridge installed with Homebridge-GSH. Then, install `ffmpeg-for-homebridge` for media handling.
+Install Homebridge with the Homebridge-GSH plugin and `ffmpeg-for-homebridge` for handling media files.
 
 ```bash
 sudo npm install -g ffmpeg-for-homebridge
@@ -38,7 +38,7 @@ sudo npm install -g ffmpeg-for-homebridge
 
 ## Configuration
 
-Set up your `.env` file with necessary environment variables including your RTSP stream URL and local storage paths. Also ensure that your Python script path and binary are correctly set.
+Create a `.env` file for your environment variables, including paths and settings for the RTSP stream, notification endpoints, local storage, and the Python environment.
 
 ```plaintext
 RTSP_STRING=rtsp://username:password@camera_ip:port
@@ -51,62 +51,102 @@ PYTHON_BIN_PATH=/path/to/python/binary
 GRADIO_PROMPT_STRING=Your custom Gradio prompt
 ```
 
-Further, configure the Homebridge-GSH plugin via Homebridge Config UI X for easy management.
+Configure the Homebridge-GSH plugin via Homebridge Config UI X for seamless management.
 
 ## Usage
 
-The system monitors for motion using your RTSP camera feeds. Upon detecting motion, it captures video and images, sends notifications through Line Notify, and calls a Python script for additional processing.
+Upon detecting motion, the system:
+1. **Captures Media**: Saves videos and images locally.
+2. **Calls the Python Script**: Executes `call_gradio_local_server.py`, passing it the paths to the captured media.
+3. **Processes Output**: The script analyzes the media and returns results, which are used to trigger custom actions (like additional notifications or automated responses).
 
-### Python Script Interaction
+### Integration of Python Script for Advanced Media Analysis
 
-When motion is detected, the system calls a local Python script (`call_gradio_local_server.py`). This script processes the image with Gradio, sending the result back to the motion sensor system for further actions based on the analysis.
+The integration of the Python script adds significant value by enabling sophisticated analysis of the media captured during motion events:
+- **Deep Learning Models**: The script utilizes advanced machine learning models to interpret the content of the images and videos, identifying potential threats or unusual activities.
+- **Custom Response Logic**: Based on the analysis, the system can execute specific actions such as activating alarms, initiating further recordings, or sending detailed alerts with descriptions of the detected event.
+- **Enhanced Decision Making**: This allows for smarter decision-making in security protocols, providing a higher level of automation and precision in responses.
 
-Here's how the Python script is called:
-
-1. **Image and Video Capture**: On motion detection, video and image files are saved locally.
-2. **Python Script Call**: The system then calls the Python script, passing it the paths to the newly captured media.
-3. **Custom Actions**: Based on the script's analysis, custom actions such as additional notifications or integration triggers can be performed.
-
-This integration allows for sophisticated handling of motion events, turning simple notifications into intelligent responses.
+This setup not only notifies but also intelligently analyzes and responds to different scenarios detected by your cameras, offering a more robust security solution.
 
 ## Google Apps Script for Notifications
 
-This system utilizes a Google Apps Script to send notifications via Line Notify. Below is the script setup to manage POST requests:
+Utilize a Google Apps Script to handle notification dispatch via Line Notify. This script ensures that notifications are sent out promptly when the Python script flags an event.
 
 ```javascript
 function doPost(e) {
-  // Function content remains the same as previously described
+  try {
+    if (e && e.postData && e.postData.type === "application/json") {
+      var content = JSON.parse(e.postData.contents);
+      if (content.message) {
+        sendLineNotification(content.message);
+        return ContentService.createTextOutput(JSON.stringify({ status: "success" }))
+          .setMimeType(ContentService.MimeType.JSON);
+      } else {
+        return sendError("No message provided");
+      }
+    } else {
+      return sendError("Invalid request or content type");
+    }
+  } catch (error) {
+    console.error('Error processing request:', error);
+    return sendError("Error processing request");
+  }
 }
 
 function sendLineNotification(message) {
-  // Function content remains the same as previously described
+  var tokens = [
+    // Replace with actual tokens
+  ]; // Array of LINE Notify tokens
+
+  var responses = [];
+
+  tokens.forEach(function(token) {
+    var options = {
+      method: "post",
+      headers: {
+        "Authorization": "Bearer " + token
+      },
+      payload: {
+        message: message
+      },
+      muteHttpExceptions: true
+    };
+
+    var url = "https://notify-api.line.me/api/notify";
+    var response = UrlFetchApp.fetch(url, options);
+    console.log('LINE Notify response for token', token, ':', response.getContentText());
+    responses.push(response.getContentText());
+  });
+
+  return responses; // Optionally return responses for logging or other purposes
 }
 
 function sendError(errorMessage) {
-  // Function content remains the same as previously described
+  console.error(errorMessage);
+  return ContentService.createTextOutput(JSON.stringify({ status: "error", message: errorMessage }))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 ```
-
-Ensure you replace placeholder tokens with your actual Line Notify tokens.
+Replace placeholder tokens with actual Line Notify tokens.
 
 ### Generating a Line Notify Token
 
-To send notifications through Line Notify, you will need a personal access token. Generate this token by visiting the [Line Notify token page](https://notify-bot.line.me/my/).
+Generate a personal access token for notifications through Line Notify by visiting their token page.
 
 ## Homebridge-GSH Integration
 
-This system uses [Homebridge-GSH](https://github.com/oznu/homebridge-gsh#readme) for easy integration with Google Home devices, allowing voice control and remote management of your Homebridge connected devices.
+This system utilizes Homebridge-GSH for integration with Google Home devices, enhancing control and accessibility.
 
 ## Managing Media Files
 
-Automatic file management ensures your storage does not overflow by maintaining only the most recent recordings and images, effectively managing space by deleting the oldest files beyond set thresholds.
+The automatic management of media files prevents storage overflow by maintaining only the most recent files and deleting older ones beyond set limits.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Credits
 
-- [oznu](https://github.com/oznu) - For developing Homebridge and the Google Smart Home plugin.
-- [NorthernMan54](https://github.com/NorthernMan54) - For creating Hap-Node-Client which facilitates communication with HomeKit-enabled accessories
----
+- [oznu](https://github.com/oznu) - Developer of Homebridge and the Google Smart Home plugin.
+- [NorthernMan54](https://github.com/NorthernMan54) - Creator of Hap-Node-Client, which facilitates communication with HomeKit-enabled accessories.
