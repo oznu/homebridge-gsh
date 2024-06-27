@@ -68,7 +68,7 @@ The integration of the Python script adds significant value by enabling sophisti
 - **Deep Learning Models**: The script utilizes advanced machine learning models to interpret the content of the images and videos, identifying potential threats or unusual activities.
 - **Custom Response Logic**: Based on the analysis, the system can execute specific actions such as activating alarms, initiating further recordings, or sending detailed alerts with descriptions of the detected event.
 - **Enhanced Decision Making**: This allows for smarter decision-making in security protocols, providing a higher level of automation and precision in responses.
-
+❗ Please remember start your [Moodream gradio server](https://github.com/vikhyat/moondream server. 
 This setup not only notifies but also intelligently analyzes and responds to different scenarios detected by your cameras, offering a more robust security solution.
 
 ## Google Apps Script for Notifications
