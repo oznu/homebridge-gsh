@@ -127,18 +127,23 @@ export class MotionSensor {
         if (isOccupied) {
             console.log(`Motion detected on sensor ${service.serviceName}`);
             // Add custom actions here, e.g., turning on lights, sending notifications, etc.
-            try {
-                // Notify first
-                const timestamp = this.formatDate(new Date());
+            if (service.accessoryInformation.Manufacturer.toLowerCase().includes('tp-link')) {
+                console.log('Handling TP-Link device specific actions');
+                // Add TP-Link specific actions here
+                try {
+                    // Notify first
+                    const timestamp = this.formatDate(new Date());
 
-                // Take screenshot
-                await this.takeScreenshot(timestamp);
+                    // Take screenshot
+                    await this.takeScreenshot(timestamp);
 
-                // Start recording
-                await this.startRecording(timestamp);
-            } catch (error) {
-                console.error("Error during motion detection handling:", error);
+                    // Start recording
+                    await this.startRecording(timestamp);
+                } catch (error) {
+                    console.error("Error during motion detection handling:", error);
+                }
             }
+
         } else {
             console.log(`No motion detected on sensor ${service.serviceName}`);
             // Actions when no motion is detected

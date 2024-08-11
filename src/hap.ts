@@ -24,6 +24,7 @@ import { Thermostat } from './types/thermostat';
 import { Window } from './types/window';
 import { WindowCovering } from './types/window-covering';
 import { MotionSensor } from './types/motion-sensor';
+import { ContactSensor } from './types/contact-sensor';
 
 export class Hap {
   socket;
@@ -54,6 +55,7 @@ export class Hap {
     Window: new Window(),
     WindowCovering: new WindowCovering(),
     MotionSensor: new MotionSensor(),
+    ContactSensor: new ContactSensor(),
   };
 
   /* event tracking */
