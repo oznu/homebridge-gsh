@@ -11,25 +11,28 @@
 
 ## Overview
 
-The SmartGuard Motion Detection System leverages your existing RTSP-enabled cameras to detect motion and notify you via Line Notify. It integrates with Homebridge to provide compatibility with Google Smart Home, allowing notifications and control across both **iOS** and **Android** devices.
+The SmartGuard Motion Detection System leverages RTSP-enabled cameras to monitor environments effectively. It detects motion, captures media (video and image), sends real-time notifications, and employs an advanced Python script for in-depth analysis and responsive actions. This robust system is designed for compatibility with both **iOS** and **Android** devices through Homebridge integration.
 
 ## Features
 
-- **Universal Compatibility**: Works with any RTSP-supported camera.
-- **Real-Time Notifications**: Utilizes Google Apps Script with Line Notify for instant alerts.
-- **Homebridge Integration**: Ensures full compatibility with iOS and Android via Homebridge-GSH.
-- **Efficient Storage Management**: Automatically manages storage of video and image files, adhering to user-defined limits.
+- **Universal Compatibility**: Compatible with any security camera that supports RTSP, providing flexible deployment options across different hardware.
+- **Real-Time Notifications**: Employs Line Notify powered by a Google Apps Script to deliver instant alerts upon motion detection, ensuring timely awareness.
+- **Advanced Media Analysis**: Integrates a sophisticated Python script that utilizes machine learning to analyze captured media, enhancing the identification of specific threats or anomalies.
+- **Proactive Security Responses**: The script's analysis can trigger specific, automated security responses such as turning on additional cameras, locking doors, or activating alarms.
+- **Homebridge Integration**: Fully compatible with iOS and Android through the Homebridge-GSH plugin, allowing for seamless operation and integration with smart home ecosystems.
+- **Efficient Storage Management**: Implements smart storage strategies that automatically manage video and image files, maintaining operational efficiency by adhering to set storage limits.
+- **Customizable Action Triggers**: Based on the Python script’s output, the system can execute customized actions, enhancing security measures and providing tailored responses to different situations.
 
 ## Prerequisites
 
 - Node.js and npm installed
-- Homebridge setup with the [Homebridge-Google Smart Home](https://github.com/oznu/homebridge-gsh#readme) plugin
+- Homebridge setup with the Homebridge-Google Smart Home plugin
 - `ffmpeg-for-homebridge` installed for media processing
 - Access to RTSP stream URL from your security cameras
 
 ## Installation
 
-Ensure you have Homebridge installed with Homebridge-GSH. Then, install `ffmpeg-for-homebridge` for media handling.
+Install Homebridge with the Homebridge-GSH plugin and `ffmpeg-for-homebridge` for handling media files.
 
 ```bash
 sudo npm install -g ffmpeg-for-homebridge
@@ -37,7 +40,7 @@ sudo npm install -g ffmpeg-for-homebridge
 
 ## Configuration
 
-Set up your `.env` file with necessary environment variables including your RTSP stream URL and local storage paths. 
+Create a `.env` file for your environment variables, including paths and settings for the RTSP stream, notification endpoints, local storage, and the Python environment.
 
 ```plaintext
 RTSP_STRING=rtsp://username:password@camera_ip:port
@@ -46,17 +49,32 @@ DIRECTORY_TO_SAVE_STRING=/path/to/your/storage/directory
 MOTION_DETECTED_STRING=Motion detected!
 MAX_VIDEO_NUMBER=50
 MAX_IMAGE_NUMBER=50
+PYTHON_BIN_PATH=/path/to/python/binary
+GRADIO_PROMPT_STRING=Your custom Gradio prompt
 ```
 
-Further, configure the Homebridge-GSH plugin via Homebridge Config UI X for easy management.
+Configure the Homebridge-GSH plugin via Homebridge Config UI X for seamless management.
 
 ## Usage
 
-The system monitors for motion using your RTSP camera feeds, capturing video and images when motion is detected, and sending notifications through Line Notify via a Google Apps Script.
+Upon detecting motion, the system:
+1. **Captures Media**: Saves videos and images locally.
+2. **Calls the Python Script**: Executes `call_gradio_local_server.py`, passing it the paths to the captured media.
+3. **Processes Output**: The script analyzes the media and returns results, which are used to trigger custom actions (like additional notifications or automated responses).
+
+### Integration of Python Script for Advanced Media Analysis
+
+The integration of the Python script adds significant value by enabling sophisticated analysis of the media captured during motion events:
+- **Deep Learning Models**: The script utilizes advanced machine learning models to interpret the content of the images and videos, identifying potential threats or unusual activities.
+- **Custom Response Logic**: Based on the analysis, the system can execute specific actions such as activating alarms, initiating further recordings, or sending detailed alerts with descriptions of the detected event.
+- **Enhanced Decision Making**: This allows for smarter decision-making in security protocols, providing a higher level of automation and precision in responses.
+
+❗ Please remember to start your [Moodream gradio server](https://github.com/vikhyat/moondream) server.  
+This setup not only notifies but also intelligently analyzes and responds to different scenarios detected by your cameras, offering a more robust security solution.
 
 ## Google Apps Script for Notifications
 
-This system utilizes a Google Apps Script to send notifications via Line Notify. Below is the script setup to manage POST requests:
+Utilize a Google Apps Script to handle notification dispatch via Line Notify. This script ensures that notifications are sent out promptly when the Python script flags an event.
 
 ```javascript
 function doPost(e) {
@@ -113,7 +131,6 @@ function sendError(errorMessage) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 ```
-
 Ensure you replace placeholder tokens with your actual Line Notify tokens.
 
 ### Generating a Line Notify Token
@@ -122,7 +139,7 @@ To send notifications through Line Notify, you will need a personal access token
 
 ## Homebridge-GSH Integration
 
-This system uses [Homebridge-GSH](https://github.com/oznu/homebridge-gsh#readme) for easy integration with Google Home devices, allowing voice control and remote management of your Homebridge connected devices.
+This system uses [Homebridge-GSH](https://github.com/oznu/homebridge-gsh#readme) for easy integration with Google Home devices, allowing voice control and remote management of your Homebridge-connected devices.
 
 ## Managing Media Files
 
@@ -136,4 +153,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - [oznu](https://github.com/oznu) - For developing Homebridge and the Google Smart Home plugin.
 - [NorthernMan54](https://github.com/NorthernMan54) - For creating Hap-Node-Client which facilitates communication with HomeKit-enabled accessories
----
