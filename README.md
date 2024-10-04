@@ -5,7 +5,7 @@
 
 <span align="center">
 
-### [Plugin End Of Life - 1st of December 2024](https://github.com/oznu/homebridge-gsh/releases/tag/v2.2.1)
+### [Plugin End Of Life - 1st of December 2024](https://github.com/oznu/homebridge-gsh/releases/tag/v2.2.3)
 
 # Homebridge to Google Smart Home
 
